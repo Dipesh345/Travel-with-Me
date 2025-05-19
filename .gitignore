@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Django
+*.log
+*.pot
+*.pyc
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+.env
+
+# PostgreSQL
+*.pgsql
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# Node.js / React
+node_modules/
+build/
+.env.local
+.env.development
+.env.production
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+*.swp
+*~
