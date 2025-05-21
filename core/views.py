@@ -1,7 +1,10 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
-from .serializers import RegisterSerializer, UserSerializer
+from .models import Trip
+from .serializers import RegisterSerializer, UserSerializer, TripSerializer
+from .pagination import TripPagination
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
@@ -112,4 +115,27 @@ class ResetPasswordView(APIView):
         user.save()
 
         return Response({"message": "Password has been reset successfully."}, status=200)
-    
+
+class TripListCreateView(generics.ListCreateAPIView):
+    serializer_class = TripSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = TripPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+
+    filterset_fields = ['start_date', 'end_date', 'budget']
+    search_fields = ['title', 'destinations']
+    ordering_fields = ['start_date', 'end_date', 'budget']
+    ordering = ['start_date']
+
+    def get_queryset(self):
+        return Trip.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class TripDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TripSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Trip.objects.filter(user=self.request.user)
