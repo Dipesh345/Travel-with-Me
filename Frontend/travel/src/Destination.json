@@ -1,29 +1,74 @@
 [
-    {
-        "id":1,
-        "name": "Canada",
-        "image": "Images/Destination-image-1.webp",
-        "days": "7Days",
-        "price": "$1234",
-        "location": "Canada",
-        "pere": "Far away..."
-    },
-    {
-        "id":1,
-        "name": "Canada",
-        "image": "Images/Destination-image-1.webp",
-        "days": "7Days",
-        "price": "$1234",
-        "location": "Canada",
-        "pere": "Far away..."
-    },
-    {
-        "id":1,
-        "name": "Canada",
-        "image": "Images/Destination-image-1.webp",
-        "days": "7Days",
-        "price": "$1234",
-        "location": "Canada",
-        "pere": "Far away..."
-    }
+  {
+    "id": 1,
+    "name": "Phewa Lake",
+    "image": "assets/destinations/Destination-image-1.webp",
+    "days": "5 Days",
+    "price": "$999",
+    "location": "Pokhara, Nepal",
+    "description": "A scenic lake surrounded by the Annapurna range and vibrant boats."
+  },
+  {
+    "id": 2,
+    "name": "Eiffel Tower",
+    "image": "assets/destinations/Destination-image-2.webp",
+    "days": "4 Days",
+    "price": "$1,299",
+    "location": "Paris, France",
+    "description": "Experience romance and history under the iconic Eiffel Tower."
+  },
+  {
+    "id": 3,
+    "name": "Big Ben",
+    "image": "assets/destinations/Destination-image-3.webp",
+    "days": "3 Days",
+    "price": "$1,150",
+    "location": "London, United Kingdom",
+    "description": "Discover the charm of historic London near the Thames River."
+  },
+  {
+    "id": 4,
+    "name": "Patan Durbar Square",
+    "image": "assets/destinations/Destination-image-4.webp",
+    "days": "2 Days",
+    "price": "$650",
+    "location": "Lalitpur, Nepal",
+    "description": "Explore ancient Newari architecture and vibrant heritage."
+  },
+  {
+    "id": 5,
+    "name": "Tower Bridge",
+    "image": "assets/destinations/Destination-image-5.webp",
+    "days": "3 Days",
+    "price": "$1,000",
+    "location": "London, United Kingdom",
+    "description": "Iconic bridge blending Gothic style and modern marvel."
+  },
+  {
+    "id": 6,
+    "name": "Colosseum",
+    "image": "assets/destinations/Destination-6.webp",
+    "days": "3 Days",
+    "price": "$1,400",
+    "location": "Rome, Italy",
+    "description": "Walk through history at the grand amphitheater of Rome."
+  },
+  {
+    "id": 7,
+    "name": "Birth Place of Gautam Buddha",
+    "image": "assets/destinations/Destination-7.webp",
+    "days": "2 Days",
+    "price": "$250",
+    "location": "Lumbini, Nepal",
+    "description": "A sacred Buddhist site and birthplace of Lord Buddha."
+  },
+  {
+    "id": 8,
+    "name": "Statue of Liberty",
+    "image": "assets/destinations/Destination-8.webp",
+    "days": "3 Days",
+    "price": "$1,350",
+    "location": "New York, USA",
+    "description": "Visit the symbol of freedom in the heart of Manhattan."
+  }
 ]
