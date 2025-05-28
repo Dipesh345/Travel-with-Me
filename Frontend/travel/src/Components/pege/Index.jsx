@@ -24,6 +24,10 @@ import tst4 from './../../assets/tst-4.webp'
 import abElement1 from './../../assets/about-element-1.webp'
 import abElement2 from './../../assets/about-element-2.webp'
 import abElement3 from './../../assets/about-element-3.webp'
+import DiscoverImg1 from './../../assets/Discover-image-1.webp'
+import DiscoverImg2 from './../../assets/Discover-image-2.webp'
+import DiscoverImg3 from './../../assets/Discover-image-3.webp'
+import DiscoverImg4 from './../../assets/Discover-image-4.webp'
 
 
 function Index() {
@@ -81,7 +85,7 @@ function Index() {
         <i className="bi bi-arrow-right-short swiper-btn swiper-next"></i>
       </Swiper>
 
-      {/* Destinations Carousel */}
+      {/* Destinations */}
       <div className="destinations py-5 my-5">
         <div className="section-title text-center d-flex flex-column align-items-center justify-content-center gap-3">
           <span className="d-flex align-items-center gap-2">
@@ -222,6 +226,83 @@ function Index() {
 </div>
 </div>
 </div>
+       {/*Discover*/}
+      <div className="discover py-5">
+  <div className="section-title">
+    <div className="text-center d-flex flex-column align-items-center justify-content-center gap-3">
+      <span className="d-flex align-items-center gap-2">
+        <img src={plane} alt="" className="img-fluid" />
+        <span>Travel Destinations</span>
+        <img src={plane} alt="" className="img-fluid" />
+      </span>
+      <h2>Go where the wild things heal.</h2>
+      <p>
+        Our clients consistently share their positive experiences with us.
+        From seamless travel arrangements to unforgettable memories, their
+        feedback reflects our commitment to quality service and customer
+        satisfaction.
+      </p>
+    </div>
+
+    <div className="row px-5 my-5 gap-3 mx-0 align-items-center justify-content-center flex-nowrap overflow-auto">
+      {/* Discover Cards */}
+      <div className="col-lg-2 discover-card position-relative">
+        <img src={DiscoverImg1} alt="" className="img-fluid" />
+        <div className="discover-card-content position-absolute d-flex flex-column align-items-center justify-content-center text-center">
+          <span>
+            <i className="bi bi-geo-alt-fill"></i> Maldives
+          </span>
+          <h2 className="mt-4">
+            Beautiful tropical beach sea with umbrella chair around swimming pool
+          </h2>
+        </div>
+      </div>
+
+      <div className="col-lg-2 discover-card position-relative">
+        <img src={DiscoverImg2} alt="" className="img-fluid" />
+        <div className="discover-card-content position-absolute d-flex flex-column align-items-center justify-content-center text-center">
+          <span>
+            <i className="bi bi-geo-alt-fill"></i> Vietnam
+          </span>
+          <h2 className="mt-4">
+            Beautiful tropical beach sea with umbrella chair around swimming pool
+          </h2>
+        </div>
+      </div>
+
+      <div className="col-lg-2 discover-card position-relative">
+        <img src={DiscoverImg3} alt="" className="img-fluid" />
+        <div className="discover-card-content position-absolute d-flex flex-column align-items-center justify-content-center text-center">
+          <span>
+            <i className="bi bi-geo-alt-fill"></i> Dubai
+          </span>
+          <h2 className="mt-4">
+            Beautiful tropical beach sea with umbrella chair around swimming pool
+          </h2>
+        </div>
+      </div>
+
+      <div className="col-lg-2 discover-card position-relative">
+        <img src={DiscoverImg4} alt="" className="img-fluid" />
+        <div className="discover-card-content position-absolute d-flex flex-column align-items-center justify-content-center text-center">
+          <span>
+            <i className="bi bi-geo-alt-fill"></i> Nepal
+          </span>
+          <h2 className="mt-4">
+            Beautiful tropical beach sea with umbrella chair around swimming pool
+          </h2>
+        </div>
+      </div>
+    </div>
+
+    {/* Centered View More Text */}
+    <div className="text-center mt-5 fs-5">
+      Want to see our Top Destinations?{' '}
+      <a href="#" className="text-decoration-underline">Click here to View More</a>
+    </div>
+  </div>
+</div>
+     
     </>
   );
 }
