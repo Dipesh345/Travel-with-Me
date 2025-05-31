@@ -779,10 +779,15 @@ font-family: var(--Urbanist-font);
     height: 300px;
     border-radius: 0;
   }
-
+.discover-card img{
+  transform: rotate(0) scale(1.3);
+}
   .discover-card-content h2 {
     font-size: 1.3rem;
   }
+.discover-card-content{
+  border-radius: 10px;
+}
 }
 
 @media (max-width: 575px) {
@@ -806,3 +811,306 @@ font-family: var(--Urbanist-font);
     font-size: 0.8rem;
   }
 }
+/*banner special offer*/
+.special-offer-animated {
+  background: linear-gradient(90deg, #7f00ff, #e100ff);
+  padding: 20px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.offer-animation-text {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  animation: slideInText 3s ease-in-out infinite alternate;
+}
+
+/* Animation Keyframes */
+@keyframes slideInText {
+  0% {
+    letter-spacing: 2px;
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    letter-spacing: 6px;
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    letter-spacing: 2px;
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .offer-animation-text {
+    font-size: 1.5rem;
+  }
+}
+
+/*offers*/
+.custom-hero-slide {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px;
+}
+
+.custom-offer-box {
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 40px;
+  padding-left: 100px; /* Prevent overlap with badge */
+  border-radius: 20px;
+  text-align: center;
+  position: relative;
+  max-width: 600px;
+  z-index: 2;
+}
+
+.custom-offer-label {
+  font-size: 1rem;
+  color: #ffc107;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.custom-main-heading {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.custom-subtext {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.custom-location-price {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.custom-learn-btn {
+  background-color: #ff5722;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  font-size: 14px;
+  border-radius: 30px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-learn-btn img {
+  height: 16px;
+}
+
+/* ✅ Top-Left Discount Badge with Gradient */
+.custom-discount {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #007bff, #ffffff);
+  padding: 10px 14px;
+  border-radius: 10px;
+  transform: rotate(-5deg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  color: #000;
+  z-index: 1;
+  max-width: 120px;
+  text-align: center;
+  pointer-events: none;
+  word-break: break-word;
+}
+
+.custom-discount-number {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.custom-discount-percent {
+  font-size: 18px;
+  font-weight: 700;
+  display: inline-block;
+  margin-left: 2px;
+}
+
+.custom-discount-off {
+  font-size: 14px;
+  font-weight: 600;
+  display: block;
+}
+
+/* Swiper Arrows */
+.swiper-btn {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  font-size: 40px;
+  color: #fff;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.swiper-prev {
+  left: 20px;
+}
+
+.swiper-next {
+  right: 20px;
+}
+
+/* =====================
+   ✅ Responsive Styles 
+   ===================== */
+
+@media (max-width: 1399px) {
+  .custom-main-heading {
+    font-size: 32px;
+  }
+
+  .custom-subtext {
+    font-size: 15px;
+  }
+
+  .custom-discount-number {
+    font-size: 28px;
+  }
+
+  .custom-discount-percent {
+    font-size: 16px;
+  }
+
+  .custom-discount-off {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1199px) {
+  .custom-main-heading {
+    font-size: 28px;
+  }
+
+  .custom-discount-number {
+    font-size: 26px;
+  }
+
+  .custom-discount-percent {
+    font-size: 15px;
+  }
+
+  .custom-discount-off {
+    font-size: 12px;
+  }
+
+  .custom-learn-btn {
+    font-size: 13px;
+    padding: 10px 20px;
+  }
+}
+
+@media (max-width: 991px) {
+  .custom-main-heading {
+    font-size: 24px;
+  }
+
+  .custom-subtext {
+    font-size: 14px;
+  }
+
+  .custom-discount-number {
+    font-size: 24px;
+  }
+
+  .custom-discount-percent {
+    font-size: 14px;
+  }
+
+  .custom-discount-off {
+    font-size: 12px;
+  }
+
+  .custom-learn-btn {
+    font-size: 12px;
+    padding: 8px 18px;
+  }
+}
+
+@media (max-width: 767px) {
+  .custom-hero-slide {
+    justify-content: center;
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  .custom-offer-box {
+    padding: 30px 20px;
+    padding-left: 80px;
+  }
+
+  .custom-main-heading {
+    font-size: 22px;
+  }
+
+  .custom-discount-number {
+    font-size: 22px;
+  }
+
+  .custom-discount-percent {
+    font-size: 12px;
+  }
+
+  .custom-discount-off {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 575px) {
+  .custom-main-heading {
+    font-size: 20px;
+  }
+
+  .custom-subtext {
+    font-size: 13px;
+  }
+
+  .custom-discount-number {
+    font-size: 20px;
+  }
+
+  .custom-discount-percent {
+    font-size: 11px;
+  }
+
+  .custom-discount-off {
+    font-size: 10px;
+  }
+
+  .custom-learn-btn {
+    font-size: 11px;
+    padding: 6px 14px;
+  }
+
+  .custom-location-price {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+

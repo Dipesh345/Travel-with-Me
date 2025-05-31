@@ -28,7 +28,12 @@ import DiscoverImg1 from './../../assets/Discover-image-1.webp'
 import DiscoverImg2 from './../../assets/Discover-image-2.webp'
 import DiscoverImg3 from './../../assets/Discover-image-3.webp'
 import DiscoverImg4 from './../../assets/Discover-image-4.webp'
-
+import img1 from './../../assets/img1.jpg';
+import img2 from './../../assets/img2.jpg';
+import img3 from './../../assets/img3.jpg';
+import testBG from './../../assets/test-bg.webp';
+import testimg01 from './../../assets/tst-image-1.webp';
+import testimg02 from './../../assets/tst-3.webp';
 
 function Index() {
   return (
@@ -253,7 +258,7 @@ function Index() {
             <i className="bi bi-geo-alt-fill"></i> Maldives
           </span>
           <h2 className="mt-4">
-            Beautiful tropical beach sea with umbrella chair around swimming pool
+            Crystal waters, white sands, and ocean villas.
           </h2>
         </div>
       </div>
@@ -265,7 +270,7 @@ function Index() {
             <i className="bi bi-geo-alt-fill"></i> Vietnam
           </span>
           <h2 className="mt-4">
-            Beautiful tropical beach sea with umbrella chair around swimming pool
+            Lantern towns, green rice fields, and calm rivers.
           </h2>
         </div>
       </div>
@@ -277,7 +282,7 @@ function Index() {
             <i className="bi bi-geo-alt-fill"></i> Dubai
           </span>
           <h2 className="mt-4">
-            Beautiful tropical beach sea with umbrella chair around swimming pool
+            Skyscrapers, desert dunes, and luxury beaches.
           </h2>
         </div>
       </div>
@@ -289,7 +294,7 @@ function Index() {
             <i className="bi bi-geo-alt-fill"></i> Nepal
           </span>
           <h2 className="mt-4">
-            Beautiful tropical beach sea with umbrella chair around swimming pool
+            Snowy peaks, ancient temples, and quiet trails.
           </h2>
         </div>
       </div>
@@ -302,7 +307,145 @@ function Index() {
     </div>
   </div>
 </div>
-     
+     {/*offers*/}
+     <div className="special-offer-animated">
+  <h2 className="offer-animation-text">Get Special Offers</h2>
+</div>
+
+    <Swiper
+  modules={[Navigation, EffectFade, Autoplay]}
+  slidesPerView={1}
+  spaceBetween={30}
+  loop={true}
+  autoplay={{ delay: 3000 }}
+  effect="fade"
+  navigation={{
+    prevEl: ".swiper-prev",
+    nextEl: ".swiper-next",
+  }}
+  className="overflow-hidden"
+>
+  {/* Offer Slide 1 */}
+  <SwiperSlide>
+    <div className="custom-hero-slide" style={{ backgroundImage: `url(${img1})` }}>
+            <div className="custom-offer-box">
+              <p className="custom-offer-label">❖ 15% OFFER ❖</p>
+              <h1 className="custom-main-heading">Majestic Taj Retreat</h1>
+              <p className="custom-subtext">
+                Majestic Taj Retreat
+              </p>
+              <div className="custom-location-price">
+                <p className="location-text">📍 Location: Agra, India</p>
+                <p className="price-text">💸 Price after discount: $550</p>
+              </div>
+              <button className="custom-learn-btn">
+                LEARN MORE <img src={btnArrow} alt="Arrow" />
+              </button>
+              <div className="custom-discount">
+                <span className="custom-discount-number">15</span>
+                <span className="custom-discount-percent">%</span>
+                <span className="custom-discount-off">OFF</span>
+              </div>
+            </div>
+          </div>
+  </SwiperSlide>
+
+  {/* Offer Slide 2 */}
+  <SwiperSlide>
+    <div className="custom-hero-slide" style={{ backgroundImage: `url(${img2})` }}>
+            <div className="custom-offer-box">
+              <p className="custom-offer-label">❖ 30% OFFER ❖</p>
+              <h1 className="custom-main-heading">Mystic Mustang Escape</h1>
+              <p className="custom-subtext">
+                Uncover the hidden kingdom beyond the Himalayas — book now for a once-in-a-lifetime adventure!
+              </p>
+              <div className="custom-location-price">
+                <p className="location-text">📍 Location: Upper Mustang, Nepal</p>
+                <p className="price-text">💸 Price after discount: $450</p>
+              </div>
+              <button className="custom-learn-btn">
+                LEARN MORE <img src={btnArrow} alt="Arrow" />
+              </button>
+              <div className="custom-discount">
+                <span className="custom-discount-number">30</span>
+                <span className="custom-discount-percent">%</span>
+                <span className="custom-discount-off">OFF</span>
+              </div>
+            </div>
+          </div>
+  </SwiperSlide>
+
+  {/* Offer Slide 3 */}
+  <SwiperSlide>
+   <div className="custom-hero-slide" style={{ backgroundImage: `url(${img3})` }}>
+            <div className="custom-offer-box">
+              <p className="custom-offer-label">❖ 30% OFFER ❖</p>
+              <h1 className="custom-main-heading">Timeless Pyramid Expedition</h1>
+              <p className="custom-subtext">
+                Witness the wonders of the ancient world — book now and step back in time!
+              </p>
+              <div className="custom-location-price">
+                <p className="location-text">📍 Location: Giza, Egypt</p>
+                <p className="price-text">💸 Price after discount: $800</p>
+              </div>
+              <button className="custom-learn-btn">
+                LEARN MORE <img src={btnArrow} alt="Arrow" />
+              </button>
+              <div className="custom-discount">
+                <span className="custom-discount-number">30</span>
+                <span className="custom-discount-percent">%</span>
+                <span className="custom-discount-off">OFF</span>
+              </div>
+            </div>
+          </div>
+  </SwiperSlide>
+
+  <i className="bi bi-arrow-left-short swiper-btn swiper-prev"></i>
+  <i className="bi bi-arrow-right-short swiper-btn swiper-next"></i>
+</Swiper>
+  <p className="text-center mt-5 fs-5">
+            Discover Our Discount Offers.{" "}
+            <a href="#">Click here to View More</a>
+          </p>
+
+{/* Testimonials */}
+<div className="testimonial py-5 position-relative">
+  <img src={testBG} alt="img-testimonials" className='img-fluid test-img position-absolute'/>
+  <img src={testBG} alt="img-testimonials" className='img-fluid test-img-2 position-absolute'/>
+
+  <div className="section-title test-title">
+    <span className='d-flex align-items-center gap-2'>
+      <img src={plane} alt="" className='img-fluid' />
+      <span>Testimonials </span>
+      <img src={plane} alt="" className='img-fluid' />
+    </span>
+    <h2>What Our Clients Say’s</h2>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero nostrum reprehenderit non velit</p>
+  </div>
+
+  <div className="container mt-5">
+    <div className="row">
+      <Swiper
+        slidesPerView={1}
+        spaceBetween={10}
+        loop={true}
+        className="test-Swiper"
+      >
+        <SwiperSlide>
+          <div className="row align-items-center">
+            <div className="col-lg-6">
+              <div className="testimonial-img d-flex align-items-center justify-content-center">
+                <img src={testimg01} alt="" />
+              </div>
+            </div>
+          </div>
+        </SwiperSlide>
+      </Swiper>
+    </div>
+  </div>
+</div>
+
+
     </>
   );
 }
