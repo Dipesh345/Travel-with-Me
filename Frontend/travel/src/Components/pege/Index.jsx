@@ -32,8 +32,12 @@ import img1 from './../../assets/img1.jpg';
 import img2 from './../../assets/img2.jpg';
 import img3 from './../../assets/img3.jpg';
 import testBG from './../../assets/test-bg.webp';
+import quote from './../../assets/quote-left.png';
 import testimg01 from './../../assets/tst-image-1.webp';
-import testimg02 from './../../assets/tst-3.webp';
+import testimg02 from './../../assets/tst-1.webp';
+import testimg03 from './../../assets/tst-2.webp';
+import testimg04 from './../../assets/tst-3.webp';
+import testimg05 from './../../assets/tst-4.webp';
 
 function Index() {
   return (
@@ -410,17 +414,18 @@ function Index() {
 
 {/* Testimonials */}
 <div className="testimonial py-5 position-relative">
-  <img src={testBG} alt="img-testimonials" className='img-fluid test-img position-absolute'/>
-  <img src={testBG} alt="img-testimonials" className='img-fluid test-img-2 position-absolute'/>
+  <img src={testBG} alt="img-testimonials" className="img-fluid test-img" />
+  <img src={testBG} alt="img-testimonials" className="img-fluid test-img-2" />
 
-  <div className="section-title test-title">
-    <span className='d-flex align-items-center gap-2'>
-      <img src={plane} alt="" className='img-fluid' />
-      <span>Testimonials </span>
-      <img src={plane} alt="" className='img-fluid' />
+  <div className="section-title test-title text-center">
+    <span className="d-flex align-items-center justify-content-center gap-2">
+      <img src={plane} alt="left-plane" className="img-fluid" />
+      <span>Testimonials</span>
+      <img src={plane} alt="right-plane" className="img-fluid" />
     </span>
     <h2>What Our Clients Say’s</h2>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero nostrum reprehenderit non velit</p>
+    <p className="mt-2">We take pride in delivering exceptional experiences. 
+      Here's what our clients have to say about their journeys with us — real feedback from real people.</p>
   </div>
 
   <div className="container mt-5">
@@ -435,7 +440,123 @@ function Index() {
           <div className="row align-items-center">
             <div className="col-lg-6">
               <div className="testimonial-img d-flex align-items-center justify-content-center">
-                <img src={testimg01} alt="" />
+                <img src={testimg01} alt="testimonial-img" className="img-fluid" />
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="test-content">
+                <img src={quote} alt="quote" className="img-fluid test-content-img mb-3" />
+                <p className="test-pare">
+                  "From start to finish, the experience was seamless. The attention to detail and professionalism truly exceeded my expectations. I would highly recommend their service to anyone looking for quality and care."
+                </p>
+                <div className="test-stars mb-3">
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                </div>
+                <div className="test-user d-flex align-items-center gap-3 mt-3">
+                  <img src={testimg02} alt="Saroj Upreti" className="img-fluid custom-img-size" />
+                  <div className="test-user-info">
+                    <h3 className="m-0">Saroj Upreti</h3>
+                    <p className="m-0">Senior Developer at NCIT</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </SwiperSlide>
+
+        <SwiperSlide>
+          <div className="row align-items-center">
+            <div className="col-lg-6">
+              <div className="testimonial-img d-flex align-items-center justify-content-center">
+                <img src={testimg01} alt="testimonial-img" className="img-fluid" />
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="test-content">
+                <img src={quote} alt="quote" className="img-fluid test-content-img mb-3" />
+                <p className="test-pare">
+                    "An absolute pleasure working with this team. They listened carefully to our needs and delivered above and beyond. Their dedication to client satisfaction really sets them apart."
+                </p>
+                <div className="test-stars mb-3">
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                </div>
+                <div className="test-user d-flex align-items-center gap-3 mt-3">
+                  <img src={testimg03} alt="Sahil Shrestha" className="img-fluid custom-img-size" />
+                  <div className="test-user-info">
+                    <h3 className="m-0">Sahil Shrestha</h3>
+                    <p className="m-0">Senior Developer at NCIT</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </SwiperSlide>
+
+        <SwiperSlide>
+          <div className="row align-items-center">
+            <div className="col-lg-6">
+              <div className="testimonial-img d-flex align-items-center justify-content-center">
+                <img src={testimg01} alt="testimonial-img" className="img-fluid" />
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="test-content">
+                <img src={quote} alt="quote" className="img-fluid test-content-img mb-3" />
+                <p className="test-pare">
+                    "Efficient, friendly, and incredibly responsive — I felt heard and valued throughout the entire process. They made everything so easy and enjoyable."                </p>
+                <div className="test-stars mb-3">
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                </div>
+                <div className="test-user d-flex align-items-center gap-3 mt-3">
+                  <img src={testimg04} alt="Prateek Thapa" className="img-fluid custom-img-size" />
+                  <div className="test-user-info">
+                    <h3 className="m-0">Prateek Thapa</h3>
+                    <p className="m-0">Senior Developer at G-pay</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </SwiperSlide>
+
+        <SwiperSlide>
+          <div className="row align-items-center">
+            <div className="col-lg-6">
+              <div className="testimonial-img d-flex align-items-center justify-content-center">
+                <img src={testimg01} alt="testimonial-img" className="img-fluid" />
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="test-content">
+                <img src={quote} alt="quote" className="img-fluid test-content-img mb-3" />
+                <p className="test-pare">
+                    "I’ve collaborated with many teams before, but this one truly stood out. Their creativity and commitment brought our ideas to life better than we imagined."                </p>
+                <div className="test-stars mb-3">
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                  <i className="bi bi-star-fill"></i>
+                </div>
+                <div className="test-user d-flex align-items-center gap-3 mt-3">
+                  <img src={testimg05} alt="Krishna Sapkota" className="img-fluid custom-img-size" />
+                  <div className="test-user-info">
+                    <h3 className="m-0">Krishna Sapkota</h3>
+                    <p className="m-0">Mobile App Developer</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
