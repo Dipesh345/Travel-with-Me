@@ -38,6 +38,9 @@ import testimg02 from './../../assets/tst-1.webp';
 import testimg03 from './../../assets/tst-2.webp';
 import testimg04 from './../../assets/tst-3.webp';
 import testimg05 from './../../assets/tst-4.webp';
+import blog1 from './../../assets/blog1.webp';
+import blog2 from './../../assets/blog2.webp';
+import blog3 from './../../assets/blog3.webp';
 
 function Index() {
   return (
@@ -312,11 +315,11 @@ function Index() {
   </div>
 </div>
      {/*offers*/}
-     <div className="special-offer-animated">
+    <div className="special-offer-animated">
   <h2 className="offer-animation-text">Get Special Offers</h2>
 </div>
 
-    <Swiper
+<Swiper
   modules={[Navigation, EffectFade, Autoplay]}
   slidesPerView={1}
   spaceBetween={30}
@@ -329,88 +332,63 @@ function Index() {
   }}
   className="overflow-hidden"
 >
-  {/* Offer Slide 1 */}
-  <SwiperSlide>
-    <div className="custom-hero-slide" style={{ backgroundImage: `url(${img1})` }}>
-            <div className="custom-offer-box">
-              <p className="custom-offer-label">❖ 15% OFFER ❖</p>
-              <h1 className="custom-main-heading">Majestic Taj Retreat</h1>
-              <p className="custom-subtext">
-                Majestic Taj Retreat
-              </p>
-              <div className="custom-location-price">
-                <p className="location-text">📍 Location: Agra, India</p>
-                <p className="price-text">💸 Price after discount: $550</p>
-              </div>
-              <button className="custom-learn-btn">
-                LEARN MORE <img src={btnArrow} alt="Arrow" />
-              </button>
-              <div className="custom-discount">
-                <span className="custom-discount-number">15</span>
-                <span className="custom-discount-percent">%</span>
-                <span className="custom-discount-off">OFF</span>
-              </div>
-            </div>
+  {/* Slides */}
+  {[{
+    img: img1,
+    label: "15% OFFER",
+    heading: "Majestic Taj Retreat",
+    subtext: "Majestic Taj Retreat",
+    location: "Agra, India",
+    price: "$550",
+    discount: 15
+  }, {
+    img: img2,
+    label: "30% OFFER",
+    heading: "Mystic Mustang Escape",
+    subtext: "Uncover the hidden kingdom beyond the Himalayas — book now for a once-in-a-lifetime adventure!",
+    location: "Upper Mustang, Nepal",
+    price: "$450",
+    discount: 30
+  }, {
+    img: img3,
+    label: "30% OFFER",
+    heading: "Timeless Pyramid Expedition",
+    subtext: "Witness the wonders of the ancient world — book now and step back in time!",
+    location: "Giza, Egypt",
+    price: "$800",
+    discount: 30
+  }].map((offer, index) => (
+    <SwiperSlide key={index}>
+      <div className="custom-hero-slide" style={{ backgroundImage: `url(${offer.img})` }}>
+        <div className="custom-offer-box animate-fade-in">
+          <p className="custom-offer-label">❖ {offer.label} ❖</p>
+          <h1 className="custom-main-heading animated-heading">{offer.heading}</h1>
+          <p className="custom-subtext">{offer.subtext}</p>
+          <div className="custom-location-price">
+            <p className="location-text">📍 Location: {offer.location}</p>
+            <p className="price-text">💸 Price after discount: {offer.price}</p>
           </div>
-  </SwiperSlide>
-
-  {/* Offer Slide 2 */}
-  <SwiperSlide>
-    <div className="custom-hero-slide" style={{ backgroundImage: `url(${img2})` }}>
-            <div className="custom-offer-box">
-              <p className="custom-offer-label">❖ 30% OFFER ❖</p>
-              <h1 className="custom-main-heading">Mystic Mustang Escape</h1>
-              <p className="custom-subtext">
-                Uncover the hidden kingdom beyond the Himalayas — book now for a once-in-a-lifetime adventure!
-              </p>
-              <div className="custom-location-price">
-                <p className="location-text">📍 Location: Upper Mustang, Nepal</p>
-                <p className="price-text">💸 Price after discount: $450</p>
-              </div>
-              <button className="custom-learn-btn">
-                LEARN MORE <img src={btnArrow} alt="Arrow" />
-              </button>
-              <div className="custom-discount">
-                <span className="custom-discount-number">30</span>
-                <span className="custom-discount-percent">%</span>
-                <span className="custom-discount-off">OFF</span>
-              </div>
-            </div>
+          <button className="custom-learn-btn">
+            LEARN MORE <img src={btnArrow} alt="Arrow" />
+          </button>
+          <div className="custom-discount">
+            <span className="custom-discount-number">{offer.discount}</span>
+            <span className="custom-discount-percent">%</span>
+            <span className="custom-discount-off">OFF</span>
           </div>
-  </SwiperSlide>
-
-  {/* Offer Slide 3 */}
-  <SwiperSlide>
-   <div className="custom-hero-slide" style={{ backgroundImage: `url(${img3})` }}>
-            <div className="custom-offer-box">
-              <p className="custom-offer-label">❖ 30% OFFER ❖</p>
-              <h1 className="custom-main-heading">Timeless Pyramid Expedition</h1>
-              <p className="custom-subtext">
-                Witness the wonders of the ancient world — book now and step back in time!
-              </p>
-              <div className="custom-location-price">
-                <p className="location-text">📍 Location: Giza, Egypt</p>
-                <p className="price-text">💸 Price after discount: $800</p>
-              </div>
-              <button className="custom-learn-btn">
-                LEARN MORE <img src={btnArrow} alt="Arrow" />
-              </button>
-              <div className="custom-discount">
-                <span className="custom-discount-number">30</span>
-                <span className="custom-discount-percent">%</span>
-                <span className="custom-discount-off">OFF</span>
-              </div>
-            </div>
-          </div>
-  </SwiperSlide>
+        </div>
+      </div>
+    </SwiperSlide>
+  ))}
 
   <i className="bi bi-arrow-left-short swiper-btn swiper-prev"></i>
   <i className="bi bi-arrow-right-short swiper-btn swiper-next"></i>
 </Swiper>
-  <p className="text-center mt-5 fs-5">
-            Discover Our Discount Offers.{" "}
-            <a href="#">Click here to View More</a>
-          </p>
+
+<p className="text-center mt-5 fs-5">
+  Discover Our Discount Offers. <a href="#">Click here to View More</a>
+</p>
+
 
 {/* Testimonials */}
 <div className="testimonial py-5 position-relative">
@@ -565,6 +543,79 @@ function Index() {
     </div>
   </div>
 </div>
+{/*Blog and news*/}
+<div className="blog-section-wrapper animate__animated animate__fadeInUp">
+  <div className="container py-5">
+    <div className="row align-items-center mb-4">
+      <div className="col-md-6 section-title blog-title">
+        <span className="text-primary fw-bold">BLOG & NEWS</span>
+        <h2 className="fw-bold mt-2">
+          Get More Update <br /> News & Blogs
+        </h2>
+      </div>
+      <div className="col-md-6">
+        <div className="newsletter-highlight p-4 rounded-4 position-relative animate__animated animate__fadeInRight">
+          <p className="mb-0 fs-5 text-dark">
+            <i className="bi bi-info-circle-fill me-2 text-primary"></i>
+            Stay informed and inspired by subscribing to our newsletter for the
+            latest news and insightful blog posts.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div className="row g-4">
+      {[
+        {
+          img: blog1,
+          title: "Beach Days, Long Hikes, And",
+          author: "Krishna Sapkota",
+          date: "May 8, 2025",
+        },
+        {
+          img: blog2,
+          title: "Island Hopping and Weather Tips",
+          author: "Saroj Upreti",
+          date: "January 7, 2025",
+        },
+        {
+          img: blog3,
+          title: "Assertive iterate resource maximizing",
+          author: "Sahil Shrestha",
+          date: "April 25, 2025",
+        },
+      ].map((blog, i) => (
+        <div className="col-lg-4 col-md-6" key={i}>
+          <div className="card blog-card border-0 overflow-hidden position-relative">
+            <div className="blog-img-container">
+              <img src={blog.img} className="card-img blog-img" alt="" />
+              <div className="card-img-overlay blog-overlay d-flex flex-column justify-content-end">
+                <span className="read-more">Read More</span>
+                <div className="detail">
+                  <h5 className="card-title fw-bold">{blog.title}</h5>
+                  <p className="card-text">
+                    {blog.author} • {blog.date}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <p className="text-center mt-5 fs-5">
+      Want to see our Top Blogs?{" "}
+      <a
+        href="#"
+        className="text-primary text-decoration-underline fw-semibold"
+      >
+        Click here to View More
+      </a>
+    </p>
+  </div>
+</div>
+
 
 
     </>
