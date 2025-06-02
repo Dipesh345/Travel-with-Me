@@ -52,6 +52,13 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
 }
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: white; /* or your theme color */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* optional */
+}
 
 .white-them {
   background-color: transparent !important;

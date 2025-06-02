@@ -438,7 +438,7 @@ function Index() {
                   <img src={testimg02} alt="Saroj Upreti" className="img-fluid custom-img-size" />
                   <div className="test-user-info">
                     <h3 className="m-0">Saroj Upreti</h3>
-                    <p className="m-0">Senior Developer at NCIT</p>
+                    <p className="m-0">Senior Developer at Alpine</p>
                   </div>
                 </div>
               </div>
@@ -470,7 +470,7 @@ function Index() {
                   <img src={testimg03} alt="Sahil Shrestha" className="img-fluid custom-img-size" />
                   <div className="test-user-info">
                     <h3 className="m-0">Sahil Shrestha</h3>
-                    <p className="m-0">Senior Developer at NCIT</p>
+                    <p className="m-0">Senior Developer at Sleeping studio</p>
                   </div>
                 </div>
               </div>
