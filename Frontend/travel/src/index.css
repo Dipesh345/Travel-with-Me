@@ -1296,12 +1296,10 @@ font-family: var(--Urbanist-font);
   }
 }
 /*Blog*/
-/* Blog Section Title */
 .blog-title {
   margin-bottom: 20px;
 }
 
-/* Blog Card Styling */
 .blog-card {
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   border-radius: 15px;
@@ -1313,8 +1311,6 @@ font-family: var(--Urbanist-font);
   transform: translateY(-5px);
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
 }
-
-/* Blog Image */
 .blog-img-container {
   position: relative;
   overflow: hidden;
@@ -1332,7 +1328,6 @@ font-family: var(--Urbanist-font);
   transform: scale(1.05);
 }
 
-/* Overlay (Dark Gradient Background) */
 .blog-overlay {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.3));
   padding: 20px;
@@ -1344,7 +1339,6 @@ font-family: var(--Urbanist-font);
   justify-content: flex-end;
 }
 
-/* Read More Button with Press Effect */
 .read-more {
   display: inline-block;
   background: linear-gradient(135deg, #ff5722, #ff9800);
@@ -1375,7 +1369,6 @@ font-family: var(--Urbanist-font);
   box-shadow: 0 3px 8px rgba(255, 87, 34, 0.3);
 }
 
-/* Blog Text (Title and Meta) */
 .blog-overlay .detail h5,
 .blog-overlay .detail p {
   color: #fff;
@@ -1385,7 +1378,6 @@ font-family: var(--Urbanist-font);
   animation: fadeUp 1s ease forwards;
 }
 
-/* Animation Delay for Title and Description */
 .blog-card:hover .detail h5 {
   animation-delay: 0.6s;
 }
@@ -1394,7 +1386,6 @@ font-family: var(--Urbanist-font);
   animation-delay: 0.8s;
 }
 
-/* Fade-Up Animation Keyframes */
 @keyframes fadeUp {
   to {
     opacity: 1;
@@ -1402,7 +1393,6 @@ font-family: var(--Urbanist-font);
   }
 }
 
-/* =================== Responsive Breakpoints =================== */
 @media (max-width: 991px) {
   .blog-img {
     height: 240px;
@@ -1445,6 +1435,164 @@ font-family: var(--Urbanist-font);
 
   .blog-overlay {
     padding: 16px;
+  }
+}
+/*footer*/
+.travel-footer {
+  background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;
+  color: #ffffff;
+  padding: 60px 20px 30px;
+  animation: fadeIn 1s ease-in-out;
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
+  z-index: 1;
+}
+
+.travel-footer::before {
+  content: "";
+  background-color: rgba(0, 0, 0, 0.6);
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.footer-sections {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.footer-column {
+  flex: 1 1 220px;
+}
+
+.footer-column h4 {
+  font-size: 1.2rem;
+  color: #ffd166;
+  margin-bottom: 15px;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 10px;
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.footer-column ul li i {
+  margin-right: 8px;
+  color: #ffd166;
+}
+
+.footer-column ul li:hover {
+  color: #ffa500;
+}
+
+.social-icons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.social-icons a {
+  font-size: 1.3rem;
+  color: #fff;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover {
+  transform: scale(1.2);
+  color: #ffd166;
+}
+
+.subscribe-heading {
+  margin-top: 20px;
+}
+
+.subscribe-box {
+  display: flex;
+  margin-top: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.subscribe-box input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.subscribe-box input::placeholder {
+  color: #ddd;
+}
+
+.subscribe-box button {
+  background-color: #ff6b6b;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.subscribe-box button:hover {
+  background-color: #ff4757;
+}
+
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-top: 30px;
+}
+
+.footer-links a {
+  margin-left: 20px;
+  color: #ffd166;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #fff;
+}
+
+hr {
+  border-color: #ffffff40;
+  margin: 30px 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 767px) {
+  .footer-sections {
+    flex-direction: column;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .footer-links a {
+    margin-left: 10px;
   }
 }
 

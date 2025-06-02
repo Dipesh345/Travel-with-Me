@@ -615,6 +615,66 @@ function Index() {
     </p>
   </div>
 </div>
+{/*footer*/}
+<div className="travel-footer">
+  <div className="container">
+    <div className="footer-sections">
+      <div className="footer-column">
+        <h4>Destinations</h4>
+        <ul>
+          <li>Europe</li>
+          <li>Asia</li>
+          <li>America</li>
+          <li>Africa</li>
+          <li>Australia</li>
+        </ul>
+      </div>
+      <div className="footer-column">
+        <h4>Adventures</h4>
+        <ul>
+          <li>Hiking Tours</li>
+          <li>City Walks</li>
+          <li>Historical Sites</li>
+          <li>Wildlife</li>
+          <li>Beaches</li>
+        </ul>
+      </div>
+      <div className="footer-column">
+        <h4>Contact Us</h4>
+        <ul>
+          <li><i className="fas fa-phone-alt"></i> +977-9862015811</li>
+          <li><i className="fas fa-phone-alt"></i> +977-9815014596</li>
+          <li><i className="fas fa-envelope"></i> travel299@gmail.com</li>
+        </ul>
+      </div>
+      <div className="footer-column">
+        <h4>Follow Us</h4>
+        <div className="social-icons">
+          <a href="#"><i className="fab fa-facebook-f"></i></a>
+          <a href="#"><i className="fab fa-twitter"></i></a>
+          <a href="#"><i className="fab fa-instagram"></i></a>
+          <a href="#"><i className="fab fa-linkedin-in"></i></a>
+        </div>
+
+        <h4 className="subscribe-heading">Subscribe Us</h4>
+        <div className="subscribe-box">
+          <input type="email" placeholder="Enter email address" />
+          <button>Subscribe</button>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div className="footer-bottom">
+      <p>© 2025 TravelWithMe. Crafted with ❤️ for explorers.</p>
+      <div className="footer-links">
+        <a href="#">Terms & Conditions</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
