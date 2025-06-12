@@ -26,18 +26,35 @@ class HotelSerializer(serializers.ModelSerializer):
 class BlogSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     likes_count = serializers.IntegerField(source='likes.count', read_only=True)
+    is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Blog
-        fields = ['id', 'title', 'content', 'author', 'created_at', 'likes_count']
+        fields = [
+            'id', 'title', 'slug', 'content', 'thumbnail',
+            'created_at', 'updated_at', 'status', 'tags',
+            'views', 'likes_count', 'is_liked', 'author'
+        ]
+        read_only_fields = [
+            'slug', 'created_at', 'updated_at', 'views',
+            'likes_count', 'is_liked', 'author'
+        ]
+
+    def get_is_liked(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.likes.filter(id=request.user.id).exists()
+        return False
 
 
 class CommentSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
+    blog = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Comment
-        fields = ['id', 'blog', 'text', 'author', 'created_at']
+        fields = ['id', 'blog', 'author', 'text', 'created_at']
+        read_only_fields = ['blog', 'author', 'created_at']
 
 
 class EmergencyContactSerializer(serializers.ModelSerializer):

@@ -39,16 +39,35 @@ class Hotel(models.Model):
         return self.name
 
 
+from django.utils.text import slugify
+import itertools
+
 class Blog(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blogs')
     title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True)
     content = models.TextField()
+    thumbnail = models.ImageField(upload_to='blog_thumbnails/', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=10, choices=[('draft', 'Draft'), ('published', 'Published')], default='draft')
+    tags = models.CharField(max_length=255, blank=True)
+    views = models.PositiveIntegerField(default=0)
     likes = models.ManyToManyField(User, related_name='liked_blogs', blank=True)
 
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            for i in itertools.count(1):
+                if not Blog.objects.filter(slug=slug).exists():
+                    break
+                slug = f"{base_slug}-{i}"
+            self.slug = slug
+        super().save(*args, **kwargs)
 
 class Comment(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='comments')
