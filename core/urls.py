@@ -5,6 +5,7 @@ from .views import (
     ForgotPasswordView, ResetPasswordView,
     TripListCreateView, TripDetailView, ExportTripPDFView, ExportTripQRView,
     BlogListCreateView, BlogDetailView, CommentListCreateByBlogView, toggle_like,
+    VisaCheckerAPI, WeatherForecastAPI
 )
 
 urlpatterns = [
@@ -28,4 +29,8 @@ urlpatterns = [
     path('blogs/<int:pk>/', BlogDetailView.as_view(), name='blog-detail'),
     path('blogs/<int:blog_id>/comments/', CommentListCreateByBlogView.as_view(), name='blog-comments'),
     path('blogs/<int:blog_id>/like/', toggle_like, name='blog-like-toggle'),
+
+    
+    path('visa-checker/', VisaCheckerAPI.as_view(), name='visa_checker'),
+    path('weather/', WeatherForecastAPI.as_view(), name='weather_api'),
 ]

@@ -2,6 +2,7 @@
 from io import BytesIO
 
 # Django imports
+import requests
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
@@ -10,6 +11,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from datetime import datetime
+from django.conf import settings
 
 # Third-party
 from reportlab.pdfgen import canvas
@@ -284,3 +287,90 @@ def toggle_like(request, blog_id):
         'liked': liked,
         'likes_count': blog.likes.count()
     })
+
+# -------------------------------
+# 🌍 Visa Checker View
+# -------------------------------
+
+class VisaCheckerAPI(APIView):
+    def post(self, request):
+        nationality = request.data.get('nationality')
+        destination = request.data.get('destination')
+
+        if not nationality or not destination:
+            return Response(
+                {"error": "Both nationality and destination are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        api_url = f"https://rough-sun-2523.fly.dev/visa/{nationality}/{destination}"
+        try:
+            external_response = requests.get(api_url, timeout=5)
+            if external_response.status_code == 200:
+                return Response(external_response.json())
+            return Response(
+                {"error": "Could not fetch visa info from external API."},
+                status=external_response.status_code
+            )
+        except requests.RequestException:
+            return Response(
+                {"error": "Failed to connect to Visa API."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE
+            )
+
+# -------------------------------
+# 🌤️ Weather API View
+# -------------------------------
+
+class WeatherForecastAPI(APIView):
+    def post(self, request):
+        city = request.data.get('city')
+        if not city:
+            return Response({"error": "City is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        api_key = settings.OPENWEATHER_API_KEY
+        if not api_key:
+            return Response({"error": "API key not configured."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={api_key}"
+        try:
+            geo_res = requests.get(geo_url, timeout=5)
+            geo_data_list = geo_res.json()
+            if geo_res.status_code != 200 or not geo_data_list:
+                return Response({"error": "Could not get coordinates for the city."}, status=status.HTTP_400_BAD_REQUEST)
+
+            geo_data = geo_data_list[0]
+            lat = geo_data['lat']
+            lon = geo_data['lon']
+
+        except requests.RequestException:
+            return Response({"error": "Failed to connect to geocoding service."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        forecast_url = f"http://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={api_key}"
+        try:
+            forecast_res = requests.get(forecast_url, timeout=5)
+            if forecast_res.status_code == 200:
+                forecast_data = forecast_res.json()
+                forecasts = []
+                for item in forecast_data.get('list', []):
+                    forecasts.append({
+                        "datetime": datetime.utcfromtimestamp(item['dt']).strftime('%Y-%m-%d %H:%M:%S'),
+                        "temp": item['main']['temp'],
+                        "temp_min": item['main']['temp_min'],
+                        "temp_max": item['main']['temp_max'],
+                        "description": item['weather'][0]['description'],
+                        "humidity": item['main']['humidity'],
+                        "wind_speed": item['wind']['speed'],
+                        "clouds": item['clouds']['all']
+                    })
+
+                return Response({
+                    "city": forecast_data['city']['name'],
+                    "country": forecast_data['city']['country'],
+                    "forecasts": forecasts
+                })
+
+            return Response({"error": "Could not fetch forecast data."}, status=forecast_res.status_code)
+
+        except requests.RequestException:
+            return Response({"error": "Failed to connect to forecast service."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
