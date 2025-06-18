@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 
 function Nav() {
@@ -48,7 +48,6 @@ function Nav() {
     setIsLoggedIn(false);
     setUserInfo(null);
     toast.success("Logged out successfully!");
-    // No navigate("/login");
   };
 
   return (
@@ -96,9 +95,9 @@ function Nav() {
           </div>
 
           {/* Desktop: Title */}
-          <a className="navbar-brand site-title d-none d-lg-block" href="#">
+          <Link className="navbar-brand site-title d-none d-lg-block" to="/">
             Travel with <span className="highlight-me">me</span>
-          </a>
+          </Link>
 
           {/* Desktop: Search Bar + Mic */}
           <div
@@ -120,7 +119,7 @@ function Nav() {
               </button>
             </div>
             <button
-              className="btn btn-light ms-3 rounded-circle"
+              className="btn btn-light ms-3 rounded-circle me-3"
               style={{ width: "40px", height: "40px" }}
             >
               <i className="bi bi-mic"></i>
@@ -129,10 +128,16 @@ function Nav() {
 
           {/* Desktop: Nav Items + Notification + User */}
           <div className="d-none d-lg-flex align-items-center gap-3">
-            {["Home", "About", "Tour", "Blog", "Contact"].map((item) => (
-              <a className="nav-link" href="#" key={item}>
-                {item}
-              </a>
+            {[
+              { name: "Home", to: "/" },
+              { name: "About", to: "/about" },
+              { name: "Tour", to: "/tour" },
+              { name: "Blog", to: "/blog" },
+              { name: "Contact", to: "/contact" },
+            ].map((item) => (
+              <Link className="nav-link" to={item.to} key={item.name}>
+                {item.name}
+              </Link>
             ))}
 
             <div className="dropdown">
@@ -163,18 +168,17 @@ function Nav() {
                   aria-expanded="false"
                   style={{ height: "40px" }}
                 >
-                  <i className="bi bi-person-circle fs-5 me-1"></i>{" "}
+                  <i className="bi bi-person-circle fs-5 me-1"></i>
                   Hi, {userInfo?.username || "User"}
                 </button>
                 <ul
                   className="dropdown-menu dropdown-menu-end"
                   aria-labelledby="profileDropdown"
                 >
-                  {/* Removed email line */}
                   <li>
-                    <a className="dropdown-item" href="/profile">
+                    <Link className="dropdown-item text-black" to="/profile">
                       My Profile
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <button className="dropdown-item" onClick={handleLogout}>
@@ -225,15 +229,20 @@ function Nav() {
                   </span>
                 </li>
               )}
-              {["Home", "About", "Tour", "Blog", "Contact", "Notification"].map(
-                (item) => (
-                  <li className="nav-item mb-2" key={item}>
-                    <a className="nav-link text-white" href="#">
-                      {item}
-                    </a>
-                  </li>
-                )
-              )}
+              {[
+                { name: "Home", to: "/" },
+                { name: "About", to: "/about" },
+                { name: "Tour", to: "/tour" },
+                { name: "Blog", to: "/blog" },
+                { name: "Contact", to: "/contact" },
+                { name: "Notification", to: "#" },
+              ].map((item) => (
+                <li className="nav-item mb-2" key={item.name}>
+                  <Link className="nav-link text-white" to={item.to}>
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
