@@ -2,7 +2,6 @@ import React from "react";
 import sectionBanner from "../../assets/section-banner.webp";
 import "../../styles/Contact.css";
 
-// Font Awesome 6 icons
 import {
   FaLocationDot,
   FaPhone,
@@ -11,17 +10,22 @@ import {
   FaFacebookF,
   FaTwitter,
   FaInstagram,
-  FaLinkedinIn
+  FaLinkedinIn,
 } from "react-icons/fa6";
 
 export default function Contact() {
   return (
     <>
-      {/* Banner Section */}
       <section className="contact-banner">
-        <img src={sectionBanner} alt="Contact Banner" className="banner-image" />
+        <img
+          src={sectionBanner}
+          alt="Contact Banner"
+          className="banner-image"
+        />
         <div className="banner-content">
-          <h1><span className="symbol">✦</span> Contacts</h1>
+          <h1>
+            <span className="symbol">✦</span> Contacts
+          </h1>
           <nav className="breadcrumb" aria-label="breadcrumb">
             <a href="/">Home</a> <span>➔</span> <span>contacts</span>
           </nav>
@@ -37,7 +41,11 @@ export default function Contact() {
             <input type="email" placeholder="Email Address" required />
             <input type="tel" placeholder="Phone Number" required />
             <input type="text" placeholder="Subject" required />
-            <textarea placeholder="Type your message..." rows="5" required></textarea>
+            <textarea
+              placeholder="Type your message..."
+              rows="5"
+              required
+            ></textarea>
             <button type="submit">Send Message Now</button>
           </form>
         </div>
@@ -49,7 +57,11 @@ export default function Contact() {
             <FaLocationDot className="info-icon" />
             <div>
               <h4>Office Address</h4>
-              <p>Travel Agency Network 20<br />Eastbourne Terrace, London W2 6LG</p>
+              <p>
+                Travel Agency Network
+                <br />
+                Balkumari, Lalitpur, Nepal
+              </p>
             </div>
           </div>
 
@@ -57,7 +69,7 @@ export default function Contact() {
             <FaPhone className="info-icon" />
             <div>
               <h4>Phone Number</h4>
-              <p>+44 8542-389-5470</p>
+              <p>+977-9862015811</p>
             </div>
           </div>
 
@@ -65,7 +77,7 @@ export default function Contact() {
             <FaWhatsapp className="info-icon" />
             <div>
               <h4>WhatsApp</h4>
-              <p>+44 8542-389-5470</p>
+              <p>+977-9826925244</p>
             </div>
           </div>
 
@@ -81,18 +93,38 @@ export default function Contact() {
 
       {/* Social Media Section */}
       <section className="social-section">
-        <div className="social-box facebook">
+        <a
+          href="https://www.facebook.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-box facebook"
+        >
           <FaFacebookF className="icon" /> Facebook
-        </div>
-        <div className="social-box twitter">
+        </a>
+        <a
+          href="https://www.twitter.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-box twitter"
+        >
           <FaTwitter className="icon" /> Twitter
-        </div>
-        <div className="social-box instagram">
+        </a>
+        <a
+          href="https://www.instagram.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-box instagram"
+        >
           <FaInstagram className="icon" /> Instagram
-        </div>
-        <div className="social-box linkedin">
+        </a>
+        <a
+          href="https://www.linkedin.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-box linkedin"
+        >
           <FaLinkedinIn className="icon" /> LinkedIn
-        </div>
+        </a>
       </section>
 
       {/* Google Map Section */}
