@@ -55,7 +55,7 @@ export default function Details() {
             <span className="symbol">✦</span> Tour Details
           </h1>
           <div className="breadcrumb">
-            <a href="/">Home</a> <span>➔</span> <span>{tour.title}</span>
+            <a href="/">Home</a> <span>➔</span><span> Tour Details</span>
           </div>
         </div>
       </section>
