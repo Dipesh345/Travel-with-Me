@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Import Link
 import { toast, ToastContainer } from "react-toastify";
 
 function Nav() {
@@ -33,8 +33,7 @@ function Nav() {
         .then((data) => {
           setUserInfo(data);
         })
-        .catch((err) => {
-          console.error(err);
+        .catch(() => {
           setUserInfo(null);
         });
     } else {
@@ -48,8 +47,16 @@ function Nav() {
     setIsLoggedIn(false);
     setUserInfo(null);
     toast.success("Logged out successfully!");
-    // No navigate("/login");
   };
+
+  // Navigation items with their routes
+  const navItems = [
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+    { name: "Tour", path: "/destinations" },
+    { name: "Blog", path: "/blogs" },
+    { name: "Contact", path: "/contact" },
+  ];
 
   return (
     <>
@@ -96,9 +103,9 @@ function Nav() {
           </div>
 
           {/* Desktop: Title */}
-          <a className="navbar-brand site-title d-none d-lg-block" href="#">
+          <Link className="navbar-brand site-title d-none d-lg-block" to="/">
             Travel with <span className="highlight-me">me</span>
-          </a>
+          </Link>
 
           {/* Desktop: Search Bar + Mic */}
           <div
@@ -129,10 +136,10 @@ function Nav() {
 
           {/* Desktop: Nav Items + Notification + User */}
           <div className="d-none d-lg-flex align-items-center gap-3">
-            {["Home", "About", "Tour", "Blog", "Contact"].map((item) => (
-              <a className="nav-link" href="#" key={item}>
-                {item}
-              </a>
+            {navItems.map(({ name, path }) => (
+              <Link key={name} className="nav-link" to={path}>
+                {name}
+              </Link>
             ))}
 
             <div className="dropdown">
@@ -170,11 +177,10 @@ function Nav() {
                   className="dropdown-menu dropdown-menu-end"
                   aria-labelledby="profileDropdown"
                 >
-                  {/* Removed email line */}
                   <li>
-                    <a className="dropdown-item" href="/profile">
+                    <Link className="dropdown-item" to="/profile">
                       My Profile
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <button className="dropdown-item" onClick={handleLogout}>
@@ -225,15 +231,13 @@ function Nav() {
                   </span>
                 </li>
               )}
-              {["Home", "About", "Tour", "Blog", "Contact", "Notification"].map(
-                (item) => (
-                  <li className="nav-item mb-2" key={item}>
-                    <a className="nav-link text-white" href="#">
-                      {item}
-                    </a>
-                  </li>
-                )
-              )}
+              {navItems.map(({ name, path }) => (
+                <li className="nav-item mb-2" key={name}>
+                  <Link className="nav-link text-white" to={path}>
+                    {name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
