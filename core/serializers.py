@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact
+from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
@@ -91,3 +91,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactMessage
+        fields = '__all__'
