@@ -120,6 +120,9 @@ nav {
     border-bottom-left-radius: 60px;
     border-bottom-right-radius: 60px;
   }
+.dropdown-item.custom-black {
+  color: black !important;
+}
 
   .site-title {
     font-size: 1.5rem;
@@ -128,6 +131,14 @@ nav {
   .nav-link {
     font-size: 0.95rem;
   }
+}
+
+.me-3 {
+  margin-right: 1rem;
+}
+
+.dropdown-item.custom-black {
+  color: black !important;
 }
 
 /* Mobile screens */
@@ -1580,6 +1591,23 @@ font-family: var(--Urbanist-font);
 hr {
   border-color: #ffffff40;
   margin: 30px 0;
+}
+.contact-list a {
+  text-decoration: none;  
+  color: inherit;         
+  display: flex;
+  align-items: center;    
+  gap: 8px;               
+  transition: color 0.3s ease;
+}
+
+.contact-list a:hover {
+  color: #25D366; 
+}
+
+.contact-list li {
+  margin-bottom: 12px; 
+  list-style: none;    
 }
 
 @keyframes fadeIn {
