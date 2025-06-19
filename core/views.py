@@ -32,7 +32,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 
 # App imports
-from .models import Trip, Blog, Comment
+from .models import Trip, Blog, Comment, Tour
 from .serializers import (
     RegisterSerializer,
     UserSerializer,
@@ -40,6 +40,7 @@ from .serializers import (
     BlogSerializer,
     CommentSerializer,
     ContactMessageSerializer,
+    TourSerializer,
 )
 from .pagination import TripPagination
 
@@ -387,3 +388,13 @@ class WeatherForecastAPI(APIView):
 
         except requests.RequestException:
             return Response({"error": "Failed to connect to forecast service."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+# -------------------------------
+# 🗺️ Tour List API View
+# -------------------------------
+class TourListAPIView(generics.ListAPIView):
+    queryset = Tour.objects.all()
+    serializer_class = TourSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
