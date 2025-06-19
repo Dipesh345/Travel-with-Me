@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage
+from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage, Tour
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
@@ -95,4 +95,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 class ContactMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactMessage
+        fields = '__all__'
+
+class TourSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField()
+
+    class Meta:
+        model = Tour
         fields = '__all__'

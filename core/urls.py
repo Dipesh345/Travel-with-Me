@@ -5,7 +5,7 @@ from .views import (
     ForgotPasswordView, ResetPasswordView,
     TripListCreateView, TripDetailView, ExportTripPDFView, ExportTripQRView,
     BlogListCreateView, BlogDetailView, CommentListCreateByBlogView, toggle_like,
-    VisaCheckerAPI, WeatherForecastAPI, ContactMessageAPI
+    VisaCheckerAPI, WeatherForecastAPI, ContactMessageAPI, TourListAPIView
 )
 
 urlpatterns = [
@@ -36,4 +36,6 @@ urlpatterns = [
 
     
     path('contact/', ContactMessageAPI.as_view(), name='contact-message'),
+    
+    path('tours/', TourListAPIView.as_view(), name='tour-list'),
 ]
