@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../../styles/AboutPage.css";
 import pricingPlans from "../../data/pricing";
 import sectionBanner from "../../assets/section-banner.webp";
@@ -19,6 +19,14 @@ import user3 from "../../assets/tst-3.webp";
 import blogImage from "../../assets/blog-2.webp";
 
 export default function About() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    date: "",
+  });
+
   const experienceCards = [
     { image: experience1, title: "America" },
     { image: experience2, title: "Africa" },
@@ -26,16 +34,35 @@ export default function About() {
     { image: experience4, title: "Europe" },
   ];
 
+  const openModal = (plan) => {
+    setSelectedPlan(plan);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedPlan(null);
+    setFormData({ name: "", email: "", date: "" });
+  };
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert(
+      `Booking confirmed for ${selectedPlan.title}!\nName: ${formData.name}\nEmail: ${formData.email}\nDate: ${formData.date}`
+    );
+    closeModal();
+  };
+
   return (
     <>
       <div className="about-page">
         {/* Banner */}
         <section className="about-banner">
-          <img
-            src={sectionBanner}
-            alt="About Banner"
-            className="banner-image"
-          />
+          <img src={sectionBanner} alt="About Banner" className="banner-image" />
           <div className="banner-content">
             <h1>
               <span className="symbol">✦</span> About
@@ -82,8 +109,7 @@ export default function About() {
               <div>
                 <h4>Best of Hotel</h4>
                 <p>
-                  We don’t just work with concrete and steel. We are
-                  approachable, even with our highest standards.
+                  We don’t just work with concrete and steel. We are approachable, even with our highest standards.
                 </p>
               </div>
             </div>
@@ -93,8 +119,7 @@ export default function About() {
               <div>
                 <h4>Friendly Price</h4>
                 <p>
-                  We don’t just work with concrete and steel. We are
-                  approachable, even with our highest standards.
+                  We don’t just work with concrete and steel. We are approachable, even with our highest standards.
                 </p>
               </div>
             </div>
@@ -144,18 +169,13 @@ export default function About() {
           </div>
 
           <div className="intro-center">
-            <img
-              src={blogImage}
-              alt="Travel Building"
-              className="center-image"
-            />
+            <img src={blogImage} alt="Travel Building" className="center-image" />
           </div>
 
           <div className="intro-right">
             <h4>Waiting for adventures? Don’t miss them</h4>
             <p className="intro-description">
-              We don’t just work with concrete and steel. We are approachable,
-              with even our highest concrete and steel. We work with people.
+              We don’t just work with concrete and steel. We are approachable, with even our highest concrete and steel. We work with people.
             </p>
 
             <div className="experience-badge">
@@ -170,40 +190,100 @@ export default function About() {
           </div>
         </div>
       </section>
-       <section className="pricing-section">
-      <h3 className="section-subtitle">✦ Get To Know Us</h3>
-      <h2 className="section-title">Best Holiday Package</h2>
 
-      <div className="pricing-cards">
-        {pricingPlans.map((plan, index) => (
-          <div className="pricing-card slide-in" key={index}>
-            <div className="price">
-              <span className="amount">{plan.price}</span>
-              <span className="per-month">/month</span>
+      {/* Pricing Section with Book Now buttons */}
+      <section className="pricing-section">
+        <h3 className="section-subtitle">✦ Get To Know Us</h3>
+        <h2 className="section-title">Best Holiday Package</h2>
+
+        <div className="pricing-cards">
+          {pricingPlans.map((plan, index) => (
+            <div className="pricing-card slide-in" key={index}>
+              <div className="price">
+                <span className="amount">{plan.price}</span>
+                <span className="per-month">/month</span>
+              </div>
+              <div className="plan-title">{plan.title}</div>
+              <p className="plan-description">{plan.description}</p>
+
+              <ul className="features-list">
+                {plan.features.map((feature, idx) => (
+                  <li key={idx}>✔ {feature}</li>
+                ))}
+              </ul>
+
+              {/* Book Now button opens modal */}
+              <button className="get-started-btn" onClick={() => openModal(plan)}>
+                Book Now
+              </button>
             </div>
-            <div className="plan-title">{plan.title}</div>
-            <p className="plan-description">{plan.description}</p>
+          ))}
+        </div>
+      </section>
 
-            <ul className="features-list">
-              {plan.features.map((feature, idx) => (
-                <li key={idx}>✔ {feature}</li>
-              ))}
-            </ul>
+      {/* Modal for Booking Form */}
+      {modalOpen && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()} // prevent modal close on clicking inside
+          >
+            <button className="modal-close" onClick={closeModal}>
+              &times;
+            </button>
 
-            <button className="get-started-btn">Get Started</button>
+            <h2>Book Package: {selectedPlan.title}</h2>
+            <p>Price: {selectedPlan.price}</p>
+
+            <form className="booking-form" onSubmit={handleSubmit}>
+              <label htmlFor="name">Name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+              />
+
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+
+              <label htmlFor="date">Preferred Date</label>
+              <input
+                id="date"
+                name="date"
+                type="date"
+                value={formData.date}
+                onChange={handleInputChange}
+                required
+              />
+
+              <button type="submit" className="submit-btn">
+                Confirm Booking
+              </button>
+            </form>
           </div>
-        ))}
-      </div>
-    </section>
-    <p className="text-center mt-5 fs-5">
-            Want to see our Top Deals?{" "}
-            <a
-              href="#"
-              className="text-primary text-decoration-underline fw-semibold"
-            >
-              Click here to View More
-            </a>
-          </p>
+        </div>
+      )}
+
+      {/* Bottom Text */}
+      <p className="text-center mt-5 fs-5">
+        Want to see our Top Deals?{" "}
+        <a
+          href="#"
+          className="text-primary text-decoration-underline fw-semibold"
+        >
+          Click here to View More
+        </a>
+      </p>
     </>
   );
 }
