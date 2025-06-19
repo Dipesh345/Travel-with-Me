@@ -33,8 +33,7 @@ function Nav() {
         .then((data) => {
           setUserInfo(data);
         })
-        .catch((err) => {
-          console.error(err);
+        .catch(() => {
           setUserInfo(null);
         });
     } else {
@@ -96,7 +95,9 @@ function Nav() {
 
           {/* Desktop: Title */}
           <Link className="navbar-brand site-title d-none d-lg-block" to="/">
+          <Link className="navbar-brand site-title d-none d-lg-block" to="/">
             Travel with <span className="highlight-me">me</span>
+          </Link>
           </Link>
 
           {/* Desktop: Search Bar + Mic */}
@@ -178,6 +179,7 @@ function Nav() {
                   <li>
                     <Link className="dropdown-item text-black" to="/profile">
                       My Profile
+                    </Link>
                     </Link>
                   </li>
                   <li>

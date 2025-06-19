@@ -1,1 +1,10 @@
 
+.starry-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('/stars.svg'); /* Add your SVG/PNG background */
+  opacity: 0.08;
+  z-index: 0;
+  pointer-events: none;
+}
