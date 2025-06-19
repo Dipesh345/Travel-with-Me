@@ -39,6 +39,7 @@ from .serializers import (
     TripSerializer,
     BlogSerializer,
     CommentSerializer,
+    ContactMessageSerializer,
 )
 from .pagination import TripPagination
 
@@ -143,6 +144,18 @@ class ResetPasswordView(APIView):
         user.save()
         return Response({"message": "Password has been reset successfully."})
 
+
+# -------------------------------
+# 📞 Contact Message View
+# -------------------------------
+
+class ContactMessageAPI(APIView):
+    def post(self, request):
+        serializer = ContactMessageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Message received successfully!"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # -------------------------------
 # 📌 Trip Views
