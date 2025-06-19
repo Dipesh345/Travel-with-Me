@@ -10,6 +10,7 @@ export default function Tour() {
   const [selectedDestinations, setSelectedDestinations] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [selectedTripTypes, setSelectedTripTypes] = useState([]);
+  const [ratings, setRatings] = useState({});
 
   const [showAllDestinations, setShowAllDestinations] = useState(false);
   const [showAllActivities, setShowAllActivities] = useState(false);
@@ -31,34 +32,9 @@ export default function Tour() {
     }
   };
 
-  const countDestination = (destination) =>
-    tours.filter((tour) =>
-      (tour.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tour.country.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (selectedActivities.length === 0 ||
-        (tour.activities && selectedActivities.some((act) => tour.activities.includes(act)))) &&
-      (selectedTripTypes.length === 0 || selectedTripTypes.includes(tour.type)) &&
-      tour.country === destination
-    ).length;
-
-  const countActivity = (activity) =>
-    tours.filter((tour) =>
-      (tour.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tour.country.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (selectedDestinations.length === 0 || selectedDestinations.includes(tour.country)) &&
-      (selectedTripTypes.length === 0 || selectedTripTypes.includes(tour.type)) &&
-      tour.activities && tour.activities.includes(activity)
-    ).length;
-
-  const countTripType = (type) =>
-    tours.filter((tour) =>
-      (tour.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tour.country.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (selectedDestinations.length === 0 || selectedDestinations.includes(tour.country)) &&
-      (selectedActivities.length === 0 ||
-        (tour.activities && selectedActivities.some((act) => tour.activities.includes(act)))) &&
-      tour.type === type
-    ).length;
+  const handleRating = (tourId, rating) => {
+    setRatings({ ...ratings, [tourId]: rating });
+  };
 
   const filteredTours = [...tours]
     .filter((tour) =>
@@ -87,7 +63,6 @@ export default function Tour() {
 
   return (
     <div className="tour-page">
-      {/* Banner */}
       <section className="tour-banner">
         <img src={sectionBanner} alt="Tour Banner" className="banner-image" />
         <div className="banner-content">
@@ -98,13 +73,11 @@ export default function Tour() {
         </div>
       </section>
 
-      {/* Filters and Tour Cards */}
       <section className="tour-results" style={{ display: "flex", gap: "1rem" }}>
         <div className="filter-panel" style={{ flex: "0 0 220px" }}>
           <h3>Criteria</h3>
           <button className="clear-btn" onClick={clearAll}>Clear All</button>
 
-          {/* Destination Filter */}
           <div className="filter-group">
             <h4>Destination</h4>
             {(showAllDestinations ? destinations : destinations.slice(0, 3)).map((place, i) => (
@@ -114,7 +87,7 @@ export default function Tour() {
                   checked={selectedDestinations.includes(place)}
                   onChange={() => handleCheckboxChange(place, setSelectedDestinations, selectedDestinations)}
                 />
-                {place} <span className="count">({countDestination(place)})</span>
+                {place}
               </label>
             ))}
             {destinations.length > 3 && (
@@ -124,7 +97,6 @@ export default function Tour() {
             )}
           </div>
 
-          {/* Activities Filter */}
           <div className="filter-group">
             <h4>Activities</h4>
             {(showAllActivities ? activities : activities.slice(0, 3)).map((activity, i) => (
@@ -134,7 +106,7 @@ export default function Tour() {
                   checked={selectedActivities.includes(activity)}
                   onChange={() => handleCheckboxChange(activity, setSelectedActivities, selectedActivities)}
                 />
-                {activity} <span className="count">({countActivity(activity)})</span>
+                {activity}
               </label>
             ))}
             {activities.length > 3 && (
@@ -144,7 +116,6 @@ export default function Tour() {
             )}
           </div>
 
-          {/* Trip Type Filter */}
           <div className="filter-group">
             <h4>Trip Types</h4>
             {(showAllTripTypes ? tripTypes : tripTypes.slice(0, 3)).map((type, i) => (
@@ -154,7 +125,7 @@ export default function Tour() {
                   checked={selectedTripTypes.includes(type)}
                   onChange={() => handleCheckboxChange(type, setSelectedTripTypes, selectedTripTypes)}
                 />
-                {type} <span className="count">({countTripType(type)})</span>
+                {type}
               </label>
             ))}
             {tripTypes.length > 3 && (
@@ -165,7 +136,6 @@ export default function Tour() {
           </div>
         </div>
 
-        {/* Right Panel */}
         <div style={{ flex: "1 1 auto" }}>
           <div className="selected-filters" style={{ margin: "1rem 0", fontWeight: "500" }}>
             {selectedDestinations.length > 0 && <div><strong>Selected Destinations: </strong>{selectedDestinations.join(", ")}</div>}
@@ -196,7 +166,6 @@ export default function Tour() {
               </select>
             </div>
 
-            {/* Tour Cards */}
             <div className="tour-cards" style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill,minmax(250px,1fr))" }}>
               {filteredTours.map((tour) => (
                 <div className="tour-card" key={tour.id} style={{ border: "1px solid #ccc", borderRadius: "8px", overflow: "hidden" }}>
@@ -216,6 +185,17 @@ export default function Tour() {
                         View Details
                       </Link>
                     </div>
+                    <div style={{ marginTop: "0.5rem" }}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                          key={star}
+                          onClick={() => handleRating(tour.id, star)}
+                          style={{ cursor: "pointer", color: ratings[tour.id] >= star ? "gold" : "#ccc", fontSize: "1.2rem" }}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -225,7 +205,6 @@ export default function Tour() {
         </div>
       </section>
 
-      {/* View More Link */}
       <p className="text-center mt-5 fs-5 view-more-link">
         Want to see our Top Deals?{" "}
         <Link
