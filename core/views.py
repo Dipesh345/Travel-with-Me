@@ -408,7 +408,14 @@ class TourDetailAPIView(generics.RetrieveAPIView):
     def get_serializer_context(self):
         return {'request': self.request}
 
-# Create Booking (logged in only)
+class UserBookingsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        bookings = Booking.objects.filter(user=request.user).select_related('tour')
+        serializer = BookingSerializer(bookings, many=True, context={"request": request})
+        return Response(serializer.data)
+
 class BookingCreateAPIView(generics.CreateAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer

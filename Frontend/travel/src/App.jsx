@@ -14,6 +14,9 @@ import Tours from './Components/pege/Tours';
 import Blog from './Components/pege/Blog';
 import Contact from './Components/pege/Contact';
 import Details from './Components/pege/Details';
+import EditBooking from './Components/pege/EditBooking';
+import VisaChecker from "./components/VisaChecker";
+import WeatherForecast from "./components/WeatherForecast";
 
 function AppContent() {
   const location = useLocation();
@@ -23,11 +26,13 @@ function AppContent() {
     '/profile',
     '/edit-profile',
     '/change-password',
-    '/forgot-password'
+    '/forgot-password',
+    '/visa-checker',
+    '/weather-forecast',
   ];
 
   const isResetPassword = location.pathname.startsWith('/reset-password/');
-  const hideNav = noNavRoutes.includes(location.pathname) || isResetPassword;
+  const hideNav = noNavRoutes.includes(location.pathname) || isResetPassword || location.pathname.startsWith('/edit-booking/');
 
   return (
     <>
@@ -42,10 +47,13 @@ function AppContent() {
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
+        <Route path="/edit-booking/:id" element={<EditBooking />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/tour" element={<Tours />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/visa-checker" element={<VisaChecker />} />
+        <Route path="/weather-forecast" element={<WeatherForecast />} />
       </Routes>
     </>
   );

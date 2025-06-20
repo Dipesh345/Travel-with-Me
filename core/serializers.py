@@ -130,10 +130,12 @@ class TourRatingSerializer(serializers.ModelSerializer):
 class BookingSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     tour = serializers.PrimaryKeyRelatedField(queryset=Tour.objects.all())
+    tour__title = serializers.CharField(source='tour.title', read_only=True)
 
     class Meta:
         model = Booking
         fields = '__all__'
+        extra_fields = ['tour__title']
 
 class TourRatingCreateSerializer(serializers.ModelSerializer):
     class Meta:

@@ -13,22 +13,28 @@ import {
   FaUserShield,
   FaExchangeAlt,
   FaStar,
+  FaSave,
+  FaUndo,
 } from "react-icons/fa";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Details() {
   const { id } = useParams();
-  const [tour, setTour] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
-  const [showBookingForm, setShowBookingForm] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [submittedRating, setSubmittedRating] = useState(false);
-  const [booking, setBooking] = useState(null); // store existing booking if any
-
   const token = localStorage.getItem("access_token");
   const isAuthenticated = !!token;
 
-  const [formData, setFormData] = useState({
+  const [tour, setTour] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+  // Renamed for modal toggle:
+  const [showModal, setShowModal] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [submittedRating, setSubmittedRating] = useState(false);
+  const [booking, setBooking] = useState(null);
+
+  // For booking creation form fields
+  const [newBookingData, setNewBookingData] = useState({
     name: "",
     email: "",
     phone: "",
@@ -36,7 +42,11 @@ export default function Details() {
     booking_date: "",
   });
 
-  // Fetch tour details and user's booking for this tour
+  // For editing only people count
+  const [people, setPeople] = useState(1);
+  const [saving, setSaving] = useState(false);
+
+  // Load tour and booking
   useEffect(() => {
     setLoading(true);
     axios
@@ -54,14 +64,14 @@ export default function Details() {
       });
 
     if (isAuthenticated) {
-      // Fetch booking for this tour by logged in user
       axios
         .get(`http://localhost:8000/api/bookings/by-tour/${id}/`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
           setBooking(res.data);
-          setFormData({
+          setPeople(res.data.people || 1);
+          setNewBookingData({
             name: res.data.name || "",
             email: res.data.email || "",
             phone: res.data.phone || "",
@@ -71,7 +81,8 @@ export default function Details() {
         })
         .catch(() => {
           setBooking(null);
-          setFormData({
+          setPeople(1);
+          setNewBookingData({
             name: "",
             email: "",
             phone: "",
@@ -79,69 +90,80 @@ export default function Details() {
             booking_date: "",
           });
         });
+    } else {
+      setBooking(null);
+      setPeople(1);
+      setNewBookingData({
+        name: "",
+        email: "",
+        phone: "",
+        people: 1,
+        booking_date: "",
+      });
     }
   }, [id, isAuthenticated, token]);
 
-  // Handle booking create or update
-  const handleFormSubmit = async (e) => {
+  // Handle booking update (only people editable)
+  const handleBookingUpdate = async (e) => {
     e.preventDefault();
+    if (!booking) return;
 
-    if (!isAuthenticated) {
-      alert("Please log in to book a tour.");
-      return;
-    }
-
+    setSaving(true);
     try {
-      if (booking) {
-        // Update existing booking
-        await axios.put(
-          `http://localhost:8000/api/bookings/${booking.id}/`,
-          {
-            tour: id,
-            people: formData.people,
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            booking_date: formData.booking_date,
-            status: "active",
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        alert(`Your booking for ${tour.title} has been updated!`);
-      } else {
-        // Create new booking
-        await axios.post(
-          "http://localhost:8000/api/bookings/create/",
-          {
-            tour: id,
-            people: formData.people,
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            booking_date: formData.booking_date,
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        alert(`Thank you ${formData.name}, your booking for ${tour.title} is confirmed!`);
-      }
+      await axios.patch(
+        `http://localhost:8000/api/bookings/${booking.id}/`,
+        { people },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Booking updated successfully!");
+      setShowModal(false);
 
-      // Refresh booking data
+      // Refresh booking info
       const res = await axios.get(`http://localhost:8000/api/bookings/by-tour/${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBooking(res.data);
-      setShowBookingForm(false);
-    } catch (error) {
-      console.error("Booking failed:", error);
-      alert("Failed to book the tour. Please try again.");
+      setPeople(res.data.people || 1);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update booking.");
+    } finally {
+      setSaving(false);
     }
   };
 
-  // Cancel booking (set status to cancelled)
+  // Handle new booking creation
+  const handleBookingCreate = async (e) => {
+    e.preventDefault();
+
+    setSaving(true);
+    try {
+      await axios.post(
+        `http://localhost:8000/api/bookings/create/`,
+        {
+          tour: id,
+          ...newBookingData,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Booking created successfully!");
+      setShowModal(false);
+
+      // Refresh booking info
+      const res = await axios.get(`http://localhost:8000/api/bookings/by-tour/${id}/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setBooking(res.data);
+      setPeople(res.data.people || 1);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to create booking.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Cancel booking
   const handleCancelBooking = async () => {
     if (!window.confirm("Are you sure you want to cancel your booking?")) return;
 
@@ -149,15 +171,15 @@ export default function Details() {
       await axios.patch(
         `http://localhost:8000/api/bookings/${booking.id}/`,
         { status: "cancelled" },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Your booking has been cancelled.");
+      toast.success("Booking cancelled.");
 
+      // After cancellation, reset booking to null so user can book anew
       setBooking(null);
-      setShowBookingForm(false);
-      setFormData({
+      setShowModal(false);
+      setPeople(1);
+      setNewBookingData({
         name: "",
         email: "",
         phone: "",
@@ -165,12 +187,12 @@ export default function Details() {
         booking_date: "",
       });
     } catch (error) {
-      console.error("Cancel booking failed:", error);
-      alert("Failed to cancel booking. Please try again.");
+      console.error(error);
+      toast.error("Failed to cancel booking.");
     }
   };
 
-  // Handle rating submit to backend
+  // Handle rating submit
   const handleRatingSubmit = async (value) => {
     if (!isAuthenticated) {
       alert("Please log in to rate this tour.");
@@ -180,20 +202,17 @@ export default function Details() {
       await axios.post(
         `http://localhost:8000/api/tours/${id}/rate/`,
         { rating: value },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setSubmittedRating(true);
       setRating(value);
 
-      // Refresh tour details to get updated average rating from backend
       const res = await axios.get(`http://localhost:8000/api/tours/${id}/`);
       setTour(res.data);
 
       alert("Thank you for rating!");
     } catch (error) {
-      console.error("Rating failed:", error);
+      console.error(error);
       alert("You have already rated or you're not allowed to rate.");
     }
   };
@@ -203,6 +222,7 @@ export default function Details() {
 
   return (
     <div className="details-page">
+      <ToastContainer />
       <section className="details-banner">
         <img src={sectionBanner} alt="Details Banner" className="banner-image" />
         <div className="banner-content">
@@ -217,7 +237,11 @@ export default function Details() {
       </section>
 
       <section className="tour-image-section" style={{ textAlign: "center", margin: "2rem 0" }}>
-        <img src={tour.image} alt={tour.title} style={{ maxWidth: "100%", borderRadius: "10px" }} />
+        <img
+          src={tour.image}
+          alt={tour.title}
+          style={{ maxWidth: "100%", borderRadius: "10px" }}
+        />
       </section>
 
       <section className="travel-info">
@@ -229,17 +253,19 @@ export default function Details() {
             {tour.title}
           </h2>
 
-          {isAuthenticated && !showBookingForm && (
+          {isAuthenticated && !showModal && (
             <>
-              {!booking && (
-                <button className="book-btn" onClick={() => setShowBookingForm(true)}>
+              {/* If no booking or booking is cancelled, allow new booking */}
+              {(!booking || booking.status === "cancelled") && (
+                <button className="book-btn" onClick={() => setShowModal(true)}>
                   Book Now
                 </button>
               )}
 
+              {/* If booking exists and active, show edit and cancel */}
               {booking && booking.status === "active" && (
                 <>
-                  <button className="book-btn" onClick={() => setShowBookingForm(true)}>
+                  <button className="book-btn" onClick={() => setShowModal(true)}>
                     Edit Booking
                   </button>
                   <button className="book-btn cancel-btn" onClick={handleCancelBooking}>
@@ -247,17 +273,7 @@ export default function Details() {
                   </button>
                 </>
               )}
-
-              {booking && booking.status === "cancelled" && (
-                <div style={{ color: "red", fontWeight: "bold" }}>Booking Cancelled</div>
-              )}
             </>
-          )}
-
-          {showBookingForm && (
-            <button className="book-btn" onClick={() => setShowBookingForm(false)}>
-              Close Form
-            </button>
           )}
         </div>
 
@@ -327,61 +343,192 @@ export default function Details() {
           </div>
         )}
 
-        {isAuthenticated && showBookingForm && booking?.status !== "cancelled" && (
-          <form className="booking-form" onSubmit={handleFormSubmit}>
-            <h3 style={{ marginTop: "2rem" }}>
-              {booking ? "Edit Booking" : "Booking Form"}
-            </h3>
-            <div className="form-group">
-              <label>Name:</label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                required
-              />
+        {/* Booking Modal */}
+        {showModal && (
+          <div
+            className="modal fade show d-block"
+            tabIndex="-1"
+            role="dialog"
+            aria-modal="true"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+            onClick={() => setShowModal(false)} // close modal on backdrop click
+          >
+            <div
+              className="modal-dialog modal-dialog-centered"
+              role="document"
+              onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside modal
+            >
+              <div className="modal-content p-4">
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    {booking && booking.status === "active" ? "Edit Booking" : "New Booking"}
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    aria-label="Close"
+                    onClick={() => setShowModal(false)}
+                    style={{
+                      border: "none",
+                      background: "transparent",
+                      fontSize: "1.5rem",
+                      cursor: "pointer",
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <div className="modal-body">
+                  {/* Edit booking form */}
+                  {booking && booking.status === "active" && (
+                    <form className="booking-form mt-4" onSubmit={handleBookingUpdate}>
+                      <div className="form-group mb-3">
+                        <label>Tour</label>
+                        <input type="text" className="form-control" value={tour.title} readOnly />
+                      </div>
+
+                      <div className="form-group mb-3">
+                        <label>Booking Date</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={booking.booking_date}
+                          readOnly
+                        />
+                      </div>
+
+                      <div className="form-group mb-3">
+                        <label>Number of People</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          min="1"
+                          value={people}
+                          onChange={(e) => setPeople(e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      <div className="form-group mb-3">
+                        <label>Status</label>
+                        <input type="text" className="form-control" value={booking.status} readOnly />
+                      </div>
+
+                      <div className="d-flex gap-2">
+                        <button
+                          type="submit"
+                          className="btn btn-primary d-flex align-items-center gap-2"
+                          disabled={saving}
+                        >
+                          <FaSave />
+                          {saving ? "Saving..." : "Update Booking"}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-secondary d-flex align-items-center gap-2"
+                          onClick={() => setShowModal(false)}
+                        >
+                          <FaUndo />
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* New booking form */}
+                  {(!booking || booking.status === "cancelled") && (
+                    <form className="booking-form mt-4" onSubmit={handleBookingCreate}>
+                      <div className="form-group mb-3">
+                        <label>Name</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={newBookingData.name}
+                          onChange={(e) =>
+                            setNewBookingData({ ...newBookingData, name: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+
+                      <div className="form-group mb-3">
+                        <label>Email</label>
+                        <input
+                          type="email"
+                          className="form-control"
+                          value={newBookingData.email}
+                          onChange={(e) =>
+                            setNewBookingData({ ...newBookingData, email: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+
+                      <div className="form-group mb-3">
+                        <label>Phone</label>
+                        <input
+                          type="tel"
+                          className="form-control"
+                          value={newBookingData.phone}
+                          onChange={(e) =>
+                            setNewBookingData({ ...newBookingData, phone: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+
+                      <div className="form-group mb-3">
+                        <label>Number of People</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          min="1"
+                          value={newBookingData.people}
+                          onChange={(e) =>
+                            setNewBookingData({ ...newBookingData, people: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+
+                      <div className="form-group mb-3">
+                        <label>Booking Date</label>
+                        <input
+                          type="date"
+                          className="form-control"
+                          value={newBookingData.booking_date}
+                          onChange={(e) =>
+                            setNewBookingData({ ...newBookingData, booking_date: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+
+                      <div className="d-flex gap-2">
+                        <button
+                          type="submit"
+                          className="btn btn-primary d-flex align-items-center gap-2"
+                          disabled={saving}
+                        >
+                          <FaSave />
+                          {saving ? "Saving..." : "Confirm Booking"}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-secondary d-flex align-items-center gap-2"
+                          onClick={() => setShowModal(false)}
+                        >
+                          <FaUndo />
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="form-group">
-              <label>Email:</label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Phone:</label>
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Number of People:</label>
-              <input
-                type="number"
-                value={formData.people}
-                min="1"
-                onChange={(e) => setFormData({ ...formData, people: e.target.value })}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Booking Date:</label>
-              <input
-                type="date"
-                value={formData.booking_date}
-                onChange={(e) => setFormData({ ...formData, booking_date: e.target.value })}
-                required
-              />
-            </div>
-            <button type="submit" className="submit-btn">
-              {booking ? "Update Booking" : "Confirm Booking"}
-            </button>
-          </form>
+          </div>
         )}
 
         {!isAuthenticated && (
