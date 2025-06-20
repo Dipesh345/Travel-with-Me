@@ -226,12 +226,17 @@ export default function Tour() {
                       {[1, 2, 3, 4, 5].map((star) => (
                         <span
                           key={star}
-                          onClick={() => handleRating(tour.id, star)}
-                          style={{ cursor: "pointer", color: ratings[tour.id] >= star ? "gold" : "#ccc", fontSize: "1.2rem" }}
+                          style={{
+                            color: tour.average_rating >= star ? "gold" : "#ccc",
+                            fontSize: "1.2rem"
+                          }}
                         >
                           ★
                         </span>
                       ))}
+                      <span style={{ marginLeft: "0.5rem", fontSize: "0.9rem", color: "#555" }}>
+                        ({tour.average_rating?.toFixed(1) || 0})
+                      </span>
                     </div>
                   </div>
                 </div>

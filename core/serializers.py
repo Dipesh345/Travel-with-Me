@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage, Tour
+from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage, Tour, TourRating, Booking
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
@@ -99,7 +99,43 @@ class ContactMessageSerializer(serializers.ModelSerializer):
 
 class TourSerializer(serializers.ModelSerializer):
     image = serializers.ImageField()
+    average_rating = serializers.SerializerMethodField()
+    bookings_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Tour
+        fields = [
+            'id', 'title', 'country', 'days', 'price', 'image', 'type',
+            'activities', 'description', 'admission_fee', 'insurance_coverage',
+            'language', 'hotel_transfer', 'created_at',
+            'average_rating', 'bookings_count',
+        ]
+
+    def get_average_rating(self, obj):
+        ratings = obj.ratings.all()
+        if ratings.exists():
+            return round(sum(r.rating for r in ratings) / ratings.count(), 1)
+        return 0
+
+    def get_bookings_count(self, obj):
+        return obj.bookings.count()
+
+class TourRatingSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = TourRating
+        fields = ['id', 'user', 'rating', 'created_at']
+
+class BookingSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    tour = serializers.PrimaryKeyRelatedField(queryset=Tour.objects.all())
+
+    class Meta:
+        model = Booking
         fields = '__all__'
+
+class TourRatingCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TourRating
+        fields = ['rating']

@@ -32,7 +32,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 
 # App imports
-from .models import Trip, Blog, Comment, Tour
+from .models import Trip, Blog, Comment, Tour, TourRating, Booking
 from .serializers import (
     RegisterSerializer,
     UserSerializer,
@@ -41,6 +41,8 @@ from .serializers import (
     CommentSerializer,
     ContactMessageSerializer,
     TourSerializer,
+    TourRatingSerializer,
+    BookingSerializer,
 )
 from .pagination import TripPagination
 
@@ -398,3 +400,65 @@ class TourListAPIView(generics.ListAPIView):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+class TourDetailAPIView(generics.RetrieveAPIView):
+    queryset = Tour.objects.all()
+    serializer_class = TourSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+# Create Booking (logged in only)
+class BookingCreateAPIView(generics.CreateAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class BookingDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = BookingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Only active bookings of logged-in user
+        return Booking.objects.filter(user=self.request.user, status='active')
+
+    def destroy(self, request, *args, **kwargs):
+        booking = self.get_object()
+        booking.status = 'cancelled'  # Soft delete
+        booking.save()
+        return Response({"detail": "Booking cancelled successfully."}, status=status.HTTP_200_OK)
+
+
+class BookingByTourAPIView(generics.GenericAPIView):
+    serializer_class = BookingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, tour_id):
+        try:
+            booking = Booking.objects.get(user=request.user, tour__id=tour_id, status='active')
+            serializer = self.get_serializer(booking)
+            return Response(serializer.data)
+        except Booking.DoesNotExist:
+            return Response({"detail": "Booking not found."}, status=status.HTTP_404_NOT_FOUND)
+
+# Create or Update Rating (one per user per tour)
+class TourRatingCreateUpdateAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, tour_id):
+        user = request.user
+        rating_value = request.data.get('rating')
+        if not rating_value or not (1 <= int(rating_value) <= 5):
+            return Response({'error': 'Rating must be between 1 and 5.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        tour = generics.get_object_or_404(Tour, id=tour_id)
+        rating_obj, created = TourRating.objects.update_or_create(
+            user=user, tour=tour,
+            defaults={'rating': rating_value}
+        )
+        serializer = TourRatingSerializer(rating_obj)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

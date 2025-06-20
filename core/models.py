@@ -98,7 +98,7 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.subject}"
-    
+
 class Tour(models.Model):
     TOUR_TYPES = [
         ('Luxury', 'Luxury'),
@@ -114,42 +114,43 @@ class Tour(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='tours/')
     type = models.CharField(max_length=50, choices=TOUR_TYPES)
-    activities = models.JSONField(default=list, blank=True)  # e.g. ["Boating", "Kayaking"]
+    activities = models.JSONField(default=list, blank=True)
     description = models.TextField(blank=True)
+    admission_fee = models.BooleanField(default=False)
+    insurance_coverage = models.CharField(max_length=100, default="Not Covered")
+    language = models.CharField(max_length=100, default="English")
+    hotel_transfer = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
 
-class ContactMessage(models.Model):
-    full_name = models.CharField(max_length=100)
-    email = models.EmailField()
-    phone = models.CharField(max_length=20)
-    subject = models.CharField(max_length=150)
-    message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.full_name} - {self.subject}"
-    
-class Tour(models.Model):
-    TOUR_TYPES = [
-        ('Luxury', 'Luxury'),
-        ('Premium', 'Premium'),
-        ('Normal', 'Normal'),
-        ('Adventure', 'Adventure'),
-        ('Cultural', 'Cultural'),
+class Booking(models.Model):
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('cancelled', 'Cancelled'),
     ]
-
-    title = models.CharField(max_length=255)
-    country = models.CharField(max_length=100)
-    days = models.PositiveIntegerField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    image = models.ImageField(upload_to='tours/')
-    type = models.CharField(max_length=50, choices=TOUR_TYPES)
-    activities = models.JSONField(default=list, blank=True)  # e.g. ["Boating", "Kayaking"]
-    description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='bookings')
+    people = models.PositiveIntegerField(default=1)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    booking_date = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
+    booked_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        return f"{self.user.username} booked {self.tour.title}"
+
+class TourRating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='ratings')
+    rating = models.PositiveSmallIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'tour')
+
+    def __str__(self):
+        return f"{self.user.username} rated {self.tour.title} - {self.rating}"

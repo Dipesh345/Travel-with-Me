@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage, Tour
+from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage, Tour, Booking
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Trip)
@@ -15,3 +15,5 @@ class TourAdmin(admin.ModelAdmin):
     list_display = ['title', 'country', 'price', 'days', 'type']
     search_fields = ['title', 'country']
     list_filter = ['type', 'country']
+
+admin.site.register(Booking)

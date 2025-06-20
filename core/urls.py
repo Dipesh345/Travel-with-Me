@@ -5,7 +5,9 @@ from .views import (
     ForgotPasswordView, ResetPasswordView,
     TripListCreateView, TripDetailView, ExportTripPDFView, ExportTripQRView,
     BlogListCreateView, BlogDetailView, CommentListCreateByBlogView, toggle_like,
-    VisaCheckerAPI, WeatherForecastAPI, ContactMessageAPI, TourListAPIView
+    VisaCheckerAPI, WeatherForecastAPI, ContactMessageAPI, TourListAPIView,
+    TourDetailAPIView, TourRatingCreateUpdateAPIView,
+    BookingCreateAPIView, BookingDetailAPIView, BookingByTourAPIView
 )
 
 urlpatterns = [
@@ -37,5 +39,13 @@ urlpatterns = [
     
     path('contact/', ContactMessageAPI.as_view(), name='contact-message'),
     
+
     path('tours/', TourListAPIView.as_view(), name='tour-list'),
+    path('tours/<int:pk>/', TourDetailAPIView.as_view(), name='tour-detail'),
+    path('tours/<int:tour_id>/rate/', TourRatingCreateUpdateAPIView.as_view(), name='tour-rate'),
+    path('bookings/create/', BookingCreateAPIView.as_view(), name='booking-create'),
+    path('bookings/<int:pk>/', BookingDetailAPIView.as_view(), name='booking-detail'),
+    path('bookings/by-tour/<int:tour_id>/', BookingByTourAPIView.as_view(), name='booking-by-tour'),
+
+
 ]

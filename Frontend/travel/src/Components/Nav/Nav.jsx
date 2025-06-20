@@ -180,7 +180,6 @@ function Nav() {
                     <Link className="dropdown-item text-black" to="/profile">
                       My Profile
                     </Link>
-                    </Link>
                   </li>
                   <li>
                     <button className="dropdown-item" onClick={handleLogout}>

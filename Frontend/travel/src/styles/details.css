@@ -141,3 +141,39 @@ body {
 .submit-btn:hover {
   background-color: #0056b3;
 }
+
+.info-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.info-header button {
+  padding: 10px 20px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+}
+
+.book-btn {
+  background-color: #6c63ff;
+  color: white;
+}
+
+.book-btn:hover {
+  background-color: #5848c2;
+}
+
+.cancel-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #a71d2a;
+}
