@@ -38,6 +38,17 @@ class Hotel(models.Model):
     def __str__(self):
         return self.name
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
 from django.utils.text import slugify
 import itertools
@@ -45,6 +56,7 @@ import itertools
 class Blog(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blogs')
     title = models.CharField(max_length=255)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='blogs')
     slug = models.SlugField(unique=True, blank=True)
     content = models.TextField()
     thumbnail = models.ImageField(upload_to='blog_thumbnails/', blank=True, null=True)

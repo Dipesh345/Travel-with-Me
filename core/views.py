@@ -32,7 +32,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 
 # App imports
-from .models import Trip, Blog, Comment, Tour, TourRating, Booking, ContactMessage
+from .models import Trip, Blog, Comment, Tour, TourRating, Booking, ContactMessage, Category
 from .serializers import (
     RegisterSerializer,
     UserSerializer,
@@ -43,6 +43,7 @@ from .serializers import (
     TourSerializer,
     TourRatingSerializer,
     BookingSerializer,
+    CategorySerializer,
 )
 from .pagination import TripPagination
 
@@ -250,10 +251,21 @@ class ExportTripQRView(APIView):
         return HttpResponse(buffer, content_type='image/png')
 
 
+
+class CategoryListView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
 class BlogListCreateView(generics.ListCreateAPIView):
     serializer_class = BlogSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = Blog.objects.all().order_by('-created_at')
+
+    def get_queryset(self):
+        queryset = Blog.objects.all().order_by('-created_at')
+        category_slug = self.request.query_params.get('category')
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+        return queryset
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -265,6 +277,7 @@ class BlogListCreateView(generics.ListCreateAPIView):
 class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BlogSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'slug'
 
     def get_queryset(self):
         return Blog.objects.all()
@@ -273,11 +286,16 @@ class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
         return {'request': self.request}
 
     def get_object(self):
-        blog = super().get_object()
-        blog.views += 1
-        blog.save(update_fields=['views'])
-        return blog
+        slug = self.kwargs.get('slug')
+        blog = get_object_or_404(Blog.objects.prefetch_related('likes', 'comments__author'), slug=slug)
 
+        session_key = f"viewed_blog_{blog.id}"
+        if not self.request.session.get(session_key):
+            blog.views += 1
+            blog.save(update_fields=['views'])
+            self.request.session[session_key] = True
+
+        return blog
 
 class CommentListCreateByBlogView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
@@ -290,6 +308,20 @@ class CommentListCreateByBlogView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         blog = get_object_or_404(Blog, id=self.kwargs['blog_id'])
         serializer.save(author=self.request.user, blog=blog)
+
+class IsCommentAuthor(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        # Only allow the author of the comment to edit/delete
+        return obj.author == request.user
+
+class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            return [permissions.IsAuthenticated(), IsCommentAuthor()]
+        return [permissions.AllowAny()]
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

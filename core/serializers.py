@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage, Tour, TourRating, Booking
+from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage, Tour, TourRating, Booking, Category
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
@@ -22,16 +22,21 @@ class HotelSerializer(serializers.ModelSerializer):
         model = Hotel
         fields = '__all__'
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'slug']
 
 class BlogSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     likes_count = serializers.IntegerField(source='likes.count', read_only=True)
     is_liked = serializers.SerializerMethodField()
+    category = CategorySerializer(read_only=True)
 
     class Meta:
         model = Blog
         fields = [
-            'id', 'title', 'slug', 'content', 'thumbnail',
+            'id', 'title', 'slug', 'content', 'thumbnail', 'category',
             'created_at', 'updated_at', 'status', 'tags',
             'views', 'likes_count', 'is_liked', 'author'
         ]

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage, Tour, Booking
+from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage, Tour, Booking, Category
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Trip)
@@ -17,3 +17,4 @@ class TourAdmin(admin.ModelAdmin):
     list_filter = ['type', 'country']
 
 admin.site.register(Booking)
+admin.site.register(Category)

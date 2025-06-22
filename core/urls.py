@@ -8,7 +8,7 @@ from .views import (
     VisaCheckerAPI, WeatherForecastAPI, ContactMessageAPI, TourListAPIView,
     TourDetailAPIView, TourRatingCreateUpdateAPIView,
     BookingCreateAPIView, BookingDetailAPIView, BookingByTourAPIView,
-    UserBookingsAPIView
+    UserBookingsAPIView, CategoryListView, CommentRetrieveUpdateDestroyView
 )
 
 urlpatterns = [
@@ -17,6 +17,7 @@ urlpatterns = [
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/register/', RegisterView.as_view(), name='register'),
     path('auth/profile/', UserProfileView.as_view(), name='user_profile'),
+    path('users/<int:pk>/', UserProfileView.as_view(), name='user-detail'),
     path('auth/change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('auth/forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
     path('auth/reset-password/<uidb64>/<token>/', ResetPasswordView.as_view(), name='reset-password'),
@@ -27,10 +28,13 @@ urlpatterns = [
     path('trips/<int:pk>/export/pdf/', ExportTripPDFView.as_view(), name='trip-export-pdf'),
     path('trips/<int:pk>/export/qr/', ExportTripQRView.as_view(), name='trip-export-qr'),
 
+    path('categories/', CategoryListView.as_view(), name='category-list'),
+
     # Blogs & Comments
     path('blogs/', BlogListCreateView.as_view(), name='blog-list-create'),
-    path('blogs/<int:pk>/', BlogDetailView.as_view(), name='blog-detail'),
+    path('blogs/<slug:slug>/', BlogDetailView.as_view(), name='blog-detail'),
     path('blogs/<int:blog_id>/comments/', CommentListCreateByBlogView.as_view(), name='blog-comments'),
+    path('blogs/comments/<int:pk>/', CommentRetrieveUpdateDestroyView.as_view(), name='comment-detail'),
     path('blogs/<int:blog_id>/like/', toggle_like, name='blog-like-toggle'),
 
     
