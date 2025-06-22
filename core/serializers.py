@@ -134,8 +134,10 @@ class BookingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Booking
-        fields = '__all__'
-        extra_fields = ['tour__title']
+        fields = [
+            'id', 'user', 'tour', 'people', 'name', 'email', 'phone', 'booking_date',
+            'status', 'booked_at', 'tour__title'
+        ]
 
 class TourRatingCreateSerializer(serializers.ModelSerializer):
     class Meta:

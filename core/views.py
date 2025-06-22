@@ -32,7 +32,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 
 # App imports
-from .models import Trip, Blog, Comment, Tour, TourRating, Booking
+from .models import Trip, Blog, Comment, Tour, TourRating, Booking, ContactMessage
 from .serializers import (
     RegisterSerializer,
     UserSerializer,
@@ -153,6 +153,11 @@ class ResetPasswordView(APIView):
 # -------------------------------
 
 class ContactMessageAPI(APIView):
+    def get(self, request):
+        messages = ContactMessage.objects.all().order_by('-created_at')
+        serializer = ContactMessageSerializer(messages, many=True)
+        return Response(serializer.data)
+
     def post(self, request):
         serializer = ContactMessageSerializer(data=request.data)
         if serializer.is_valid():

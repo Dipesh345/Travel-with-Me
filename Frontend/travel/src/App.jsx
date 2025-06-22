@@ -17,6 +17,7 @@ import Details from './Components/pege/Details';
 import EditBooking from './Components/pege/EditBooking';
 import VisaChecker from "./components/VisaChecker";
 import WeatherForecast from "./components/WeatherForecast";
+import AdminRoutes from './AdminRoutes';
 
 function AppContent() {
   const location = useLocation();
@@ -32,7 +33,8 @@ function AppContent() {
   ];
 
   const isResetPassword = location.pathname.startsWith('/reset-password/');
-  const hideNav = noNavRoutes.includes(location.pathname) || isResetPassword || location.pathname.startsWith('/edit-booking/');
+  const isAdminRoute = location.pathname.startsWith('/dashboard');
+  const hideNav = noNavRoutes.includes(location.pathname) || isResetPassword || location.pathname.startsWith('/edit-booking/') || isAdminRoute;
 
   return (
     <>
@@ -55,6 +57,7 @@ function AppContent() {
         <Route path="/visa-checker" element={<VisaChecker />} />
         <Route path="/weather-forecast" element={<WeatherForecast />} />
       </Routes>
+      {isAdminRoute && <AdminRoutes />}
     </>
   );
 }

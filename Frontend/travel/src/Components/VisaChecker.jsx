@@ -103,17 +103,26 @@ export default function VisaChecker() {
           <div className="card-body">
             <h5 className="card-title mb-3">
               Visa Info from{" "}
-              <span className="text-primary">{result.passport.name} ({result.passport.code})</span>{" "}
+              <span className="text-primary">
+                {result.passport.name} ({result.passport.code})
+              </span>{" "}
               to{" "}
-              <span className="text-primary">{result.destination.name} ({result.destination.code})</span>
+              <span className="text-primary">
+                {result.destination.name} ({result.destination.code})
+              </span>
             </h5>
 
             <p>
               <strong>Visa Category: </strong> {result.category.name} ({result.category.code})
             </p>
-            <p>
-              <strong>Duration Allowed: </strong> {result.dur} days
-            </p>
+
+            {/* Show Duration Allowed only if visa category is "VF" (Visa Free) */}
+            {result.category.code === "VF" && (
+              <p>
+                <strong>Duration Allowed: </strong> {result.dur} days
+              </p>
+            )}
+
             <p>
               <small className="text-muted">
                 Last Updated: {new Date(result.last_updated).toLocaleDateString()}
