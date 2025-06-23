@@ -45,7 +45,7 @@ from .serializers import (
     BookingSerializer,
     CategorySerializer,
 )
-from .pagination import TripPagination
+from .pagination import TripPagination, CommentPagination
 
 User = get_user_model()
 
@@ -253,7 +253,7 @@ class ExportTripQRView(APIView):
 
 
 class CategoryListView(generics.ListAPIView):
-    queryset = Category.objects.all()
+    queryset = Category.objects.all().order_by('id')
     serializer_class = CategorySerializer
 
 class BlogListCreateView(generics.ListCreateAPIView):
@@ -299,11 +299,12 @@ class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class CommentListCreateByBlogView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
+    pagination_class = CommentPagination
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         blog_id = self.kwargs['blog_id']
-        return Comment.objects.filter(blog_id=blog_id)
+        return Comment.objects.filter(blog_id=blog_id).order_by('-created_at')
 
     def perform_create(self, serializer):
         blog = get_object_or_404(Blog, id=self.kwargs['blog_id'])
@@ -432,11 +433,12 @@ class WeatherForecastAPI(APIView):
 # 🗺️ Tour List API View
 # -------------------------------
 class TourListAPIView(generics.ListAPIView):
-    queryset = Tour.objects.all()
+    queryset = Tour.objects.all().order_by('id')
     serializer_class = TourSerializer
 
     def get_serializer_context(self):
         return {'request': self.request}
+
 
 class TourDetailAPIView(generics.RetrieveAPIView):
     queryset = Tour.objects.all()

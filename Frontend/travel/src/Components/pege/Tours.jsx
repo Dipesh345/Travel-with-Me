@@ -13,7 +13,6 @@ export default function Tour() {
   const [selectedDestinations, setSelectedDestinations] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [selectedTripTypes, setSelectedTripTypes] = useState([]);
-  const [ratings, setRatings] = useState({});
 
   const [showAllDestinations, setShowAllDestinations] = useState(false);
   const [showAllActivities, setShowAllActivities] = useState(false);
@@ -27,7 +26,7 @@ export default function Tour() {
   const fetchTours = async () => {
     try {
       const res = await axios.get("http://localhost:8000/api/tours/");
-      setTours(res.data);
+      setTours(res.data.results || []); // ✅ FIXED: use .results
     } catch (err) {
       console.error("Error fetching tours:", err);
     } finally {
@@ -104,12 +103,11 @@ export default function Tour() {
         <div className="banner-content">
           <h1><span className="symbol">✦</span> Trip Result Search</h1>
           <div className="breadcrumb">
-            <a href="/">Home</a> <span>➔</span> <span>Trip Result Search</span>
+            <Link to="/">Home</Link> <span>➔</span> <span>Trip Result Search</span>
           </div>
         </div>
       </section>
 
-      {/* Filter + Results */}
       <section className="tour-results" style={{ display: "flex", gap: "1rem" }}>
         {/* Filters */}
         <div className="filter-panel" style={{ flex: "0 0 220px" }}>
@@ -125,7 +123,7 @@ export default function Tour() {
                   checked={selectedDestinations.includes(place)}
                   onChange={() => handleCheckboxChange(place, setSelectedDestinations, selectedDestinations)}
                 />
-                {place}
+                {place} <span className="count">({countDestination(place)})</span>
               </label>
             ))}
             {destinations.length > 3 && (
@@ -163,7 +161,7 @@ export default function Tour() {
                   checked={selectedTripTypes.includes(type)}
                   onChange={() => handleCheckboxChange(type, setSelectedTripTypes, selectedTripTypes)}
                 />
-                {type}
+                {type} <span className="count">({countTripType(type)})</span>
               </label>
             ))}
             {tripTypes.length > 3 && (

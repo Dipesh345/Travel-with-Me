@@ -18,7 +18,7 @@ export default function Blog() {
     const fetchBlogs = async () => {
       try {
         const response = await axios.get("http://localhost:8000/api/blogs/");
-        setBlogs(response.data);
+        setBlogs(response.data.results || []);
       } catch (error) {
         console.error("Error fetching blogs:", error);
       }
@@ -27,7 +27,7 @@ export default function Blog() {
     const fetchCategories = async () => {
       try {
         const response = await axios.get("http://localhost:8000/api/categories/");
-        setCategories(response.data);
+        setCategories(response.data.results || []);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -71,12 +71,14 @@ export default function Blog() {
   }, [blogs, searchTerm, selectedCategory]);
 
   const categoryCounts = useMemo(() => {
-    return categories.map((cat) => {
-      const count = blogs.filter(
-        (blog) => blog.category && blog.category.id === cat.id
-      ).length;
-      return { ...cat, count };
-    });
+    return Array.isArray(categories)
+      ? categories.map((cat) => {
+          const count = blogs.filter(
+            (blog) => blog.category && blog.category.id === cat.id
+          ).length;
+          return { ...cat, count };
+        })
+      : [];
   }, [categories, blogs]);
 
   return (

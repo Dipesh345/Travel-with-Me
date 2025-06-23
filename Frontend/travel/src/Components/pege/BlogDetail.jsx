@@ -7,7 +7,15 @@ import "react-toastify/dist/ReactToastify.css";
 export default function BlogDetail() {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
+
+  // Pagination states for comments
   const [comments, setComments] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [nextPageUrl, setNextPageUrl] = useState(null);
+  const [prevPageUrl, setPrevPageUrl] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
+
   const [newComment, setNewComment] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedCommentText, setEditedCommentText] = useState("");
@@ -19,7 +27,7 @@ export default function BlogDetail() {
 
   const token = localStorage.getItem("access_token");
 
-  // Fetch current logged-in user's ID from /auth/profile/
+  // Fetch current logged-in user's ID
   useEffect(() => {
     if (token) {
       axios
@@ -31,11 +39,12 @@ export default function BlogDetail() {
     }
   }, [token]);
 
-  // Fetch blog by slug
+  // Fetch blog by slug (wait for user info or guest mode)
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/blogs/${slug}/`);
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const response = await axios.get(`http://localhost:8000/api/blogs/${slug}/`, { headers });
         setBlog(response.data);
         setLikesCount(response.data.likes_count);
         setLiked(response.data.is_liked);
@@ -45,18 +54,35 @@ export default function BlogDetail() {
         setLoading(false);
       }
     };
-    fetchBlog();
-  }, [slug]);
 
-  // Fetch comments for the blog
-  useEffect(() => {
-    if (blog) {
-      axios
-        .get(`http://localhost:8000/api/blogs/${blog.id}/comments/`)
-        .then((res) => setComments(res.data))
-        .catch(() => setComments([]));
+    if ((token && currentUserId !== null) || !token) {
+      fetchBlog();
     }
-  }, [blog]);
+  }, [slug, token, currentUserId]);
+
+  // Fetch paginated comments
+  useEffect(() => {
+    if (!blog) return;
+
+    const fetchComments = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/api/blogs/${blog.id}/comments/?page=${currentPage}`
+        );
+        setComments(res.data.results || []);
+        setNextPageUrl(res.data.next);
+        setPrevPageUrl(res.data.previous);
+        setTotalCount(res.data.count);
+
+        const pageSize = 5;
+        setTotalPages(Math.ceil(res.data.count / pageSize));
+      } catch {
+        setComments([]);
+      }
+    };
+
+    fetchComments();
+  }, [blog, currentPage]);
 
   const handleLike = async () => {
     if (!token) return toast.warning("Login to like this blog.");
@@ -76,15 +102,25 @@ export default function BlogDetail() {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!token) return toast.warning("Login to comment.");
+    if (!newComment.trim()) return;
 
     try {
-      const res = await axios.post(
+      await axios.post(
         `http://localhost:8000/api/blogs/${blog.id}/comments/`,
         { text: newComment },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setComments([res.data, ...comments]);
       setNewComment("");
+      setCurrentPage(1);
+      const res = await axios.get(
+        `http://localhost:8000/api/blogs/${blog.id}/comments/?page=1`
+      );
+      setComments(res.data.results || []);
+      setNextPageUrl(res.data.next);
+      setPrevPageUrl(res.data.previous);
+      setTotalCount(res.data.count);
+      const pageSize = 5;
+      setTotalPages(Math.ceil(res.data.count / pageSize));
       toast.success("Comment posted!");
     } catch {
       toast.error("Failed to submit comment");
@@ -92,6 +128,8 @@ export default function BlogDetail() {
   };
 
   const handleEditComment = async (commentId) => {
+    if (!editedCommentText.trim()) return;
+
     try {
       const response = await axios.put(
         `http://localhost:8000/api/blogs/comments/${commentId}/`,
@@ -115,15 +153,22 @@ export default function BlogDetail() {
       await axios.delete(`http://localhost:8000/api/blogs/comments/${commentId}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setComments((prev) => prev.filter((c) => c.id !== commentId));
+      const res = await axios.get(
+        `http://localhost:8000/api/blogs/${blog.id}/comments/?page=${currentPage}`
+      );
+      setComments(res.data.results || []);
+      setNextPageUrl(res.data.next);
+      setPrevPageUrl(res.data.previous);
+      setTotalCount(res.data.count);
+      const pageSize = 5;
+      setTotalPages(Math.ceil(res.data.count / pageSize));
       toast.success("Comment deleted.");
     } catch {
       toast.error("Failed to delete comment.");
     }
   };
 
-  if (loading)
-    return <div className="text-center py-5 display-6 text-secondary">Loading blog...</div>;
+  if (loading) return <div className="text-center py-5 display-6 text-secondary">Loading blog...</div>;
   if (error) return <div className="alert alert-danger text-center">{error}</div>;
   if (!blog) return <div className="alert alert-warning text-center">Blog not found.</div>;
 
@@ -131,9 +176,9 @@ export default function BlogDetail() {
     <>
       <ToastContainer position="top-right" autoClose={3000} pauseOnHover />
       <div className="container py-5">
+        {/* Blog Content */}
         <div className="card shadow-lg border-0 p-4 mb-5">
           <h1 className="display-4 fw-bold">{blog.title}</h1>
-
           <div className="d-flex align-items-center mb-4 gap-3">
             {blog.author?.profile_image && (
               <img
@@ -164,10 +209,7 @@ export default function BlogDetail() {
             />
           )}
 
-          <div
-            className="mb-4 fs-5 lh-lg"
-            dangerouslySetInnerHTML={{ __html: blog.content }}
-          />
+          <div className="mb-4 fs-5 lh-lg" dangerouslySetInnerHTML={{ __html: blog.content }} />
 
           {blog.tags && (
             <div className="mb-3">
@@ -185,19 +227,19 @@ export default function BlogDetail() {
               className="btn btn-outline-danger d-flex align-items-center gap-2"
               onClick={handleLike}
             >
-              {liked ? "💖 Liked" : "🤍 Like"}{" "}
+              {liked ? "Liked" : "Like"}{" "}
               <span className={`transition-opacity ${liked ? "text-danger" : ""}`}>
                 ({likesCount})
               </span>
             </button>
-            <span className="text-muted">👁️ {blog.views} views</span>
+            <span className="text-muted">Views: {blog.views}</span>
           </div>
         </div>
 
         {/* Comments Section */}
         <div className="card shadow-sm border-0 mb-5">
           <div className="card-body">
-            <h4 className="card-title mb-4">💬 Comments ({comments.length})</h4>
+            <h4 className="card-title mb-4">Comments ({totalCount})</h4>
 
             <form onSubmit={handleCommentSubmit} className="mb-4">
               <textarea
@@ -208,12 +250,18 @@ export default function BlogDetail() {
                 onChange={(e) => setNewComment(e.target.value)}
                 required
               />
-              <button className="btn btn-primary">Post Comment</button>
+              <button className="btn btn-primary" disabled={!newComment.trim()}>
+                Post Comment
+              </button>
             </form>
 
             {comments.length > 0 ? (
               comments.map((comment) => (
-                <div key={comment.id} className="mb-4 p-3 border rounded">
+                <div
+                  key={comment.id}
+                  className="mb-4 p-3 border rounded comment-card"
+                  style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.1)", transition: "box-shadow 0.3s ease" }}
+                >
                   <div className="d-flex align-items-center justify-content-between mb-2">
                     <div className="d-flex align-items-center">
                       {comment.author?.profile_image && (
@@ -259,6 +307,7 @@ export default function BlogDetail() {
                         <button
                           className="btn btn-sm btn-success me-2"
                           onClick={() => handleEditComment(comment.id)}
+                          disabled={!editedCommentText.trim()}
                         >
                           Save
                         </button>
@@ -282,6 +331,29 @@ export default function BlogDetail() {
               ))
             ) : (
               <p className="text-muted">No comments yet.</p>
+            )}
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="d-flex justify-content-center gap-2 mt-3">
+                <button
+                  className="btn btn-outline-secondary"
+                  disabled={!prevPageUrl}
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                >
+                  Previous
+                </button>
+                <span className="align-self-center">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  className="btn btn-outline-secondary"
+                  disabled={!nextPageUrl}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                >
+                  Next
+                </button>
+              </div>
             )}
           </div>
         </div>
