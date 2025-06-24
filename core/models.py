@@ -82,13 +82,18 @@ class Blog(models.Model):
         super().save(*args, **kwargs)
 
 class Comment(models.Model):
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='comments')
+    blog = models.ForeignKey('Blog', on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
+    likes = models.ManyToManyField(User, related_name='liked_comments', blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"Comment by {self.author.username}"
+
+    def is_reply(self):
+        return self.parent is not None
 
 
 class EmergencyContact(models.Model):

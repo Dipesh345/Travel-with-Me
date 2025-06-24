@@ -55,11 +55,27 @@ class BlogSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     blog = serializers.PrimaryKeyRelatedField(read_only=True)
+    replies = serializers.SerializerMethodField()
+    is_liked = serializers.SerializerMethodField()
+    likes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'blog', 'author', 'text', 'created_at']
-        read_only_fields = ['blog', 'author', 'created_at']
+        fields = ['id', 'blog', 'author', 'text', 'created_at', 'parent', 'replies', 'is_liked', 'likes_count']
+        read_only_fields = ['blog', 'author', 'created_at', 'replies', 'is_liked', 'likes_count']
+
+    def get_replies(self, obj):
+        queryset = obj.replies.all().order_by('created_at')
+        return CommentSerializer(queryset, many=True, context=self.context).data
+
+    def get_is_liked(self, obj):
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            return obj.likes.filter(id=request.user.id).exists()
+        return False
+
+    def get_likes_count(self, obj):
+        return obj.likes.count()
 
 
 class EmergencyContactSerializer(serializers.ModelSerializer):

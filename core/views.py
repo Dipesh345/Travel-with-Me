@@ -342,6 +342,24 @@ def toggle_like(request, blog_id):
         'likes_count': blog.likes.count()
     })
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def toggle_comment_like(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    user = request.user
+
+    if comment.likes.filter(id=user.id).exists():
+        comment.likes.remove(user)
+        liked = False
+    else:
+        comment.likes.add(user)
+        liked = True
+
+    return Response({
+        'liked': liked,
+        'likes_count': comment.likes.count()
+    })
+
 # -------------------------------
 # 🌍 Visa Checker View
 # -------------------------------

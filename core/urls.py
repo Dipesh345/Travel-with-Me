@@ -8,7 +8,8 @@ from .views import (
     VisaCheckerAPI, WeatherForecastAPI, ContactMessageAPI, TourListAPIView,
     TourDetailAPIView, TourRatingCreateUpdateAPIView,
     BookingCreateAPIView, BookingDetailAPIView, BookingByTourAPIView,
-    UserBookingsAPIView, CategoryListView, CommentRetrieveUpdateDestroyView
+    UserBookingsAPIView, CategoryListView, CommentRetrieveUpdateDestroyView,
+    toggle_comment_like
 )
 
 urlpatterns = [
@@ -37,7 +38,8 @@ urlpatterns = [
     path('blogs/comments/<int:pk>/', CommentRetrieveUpdateDestroyView.as_view(), name='comment-detail'),
     path('blogs/<int:blog_id>/like/', toggle_like, name='blog-like-toggle'),
 
-    
+    path('blogs/comments/<int:comment_id>/like/', toggle_comment_like, name='toggle_comment_like'),
+
     path('visa-checker/', VisaCheckerAPI.as_view(), name='visa_checker'),
     path('weather/', WeatherForecastAPI.as_view(), name='weather_api'),
 
