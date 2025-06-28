@@ -4,6 +4,7 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/navigation";
 import { EffectFade, Navigation, Autoplay } from "swiper/modules";
+import RatingDropdown from "./RatingDropdown";
 
 import { Splide, SplideTrack, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
@@ -135,6 +136,8 @@ function Index() {
             <SplideTrack>
               {Destination.map((dest) => (
                 <SplideSlide key={dest.id}>
+                    
+                  
                   <div className="dest-card position-relative">
                     <div className="dest-img overflow-hidden rounded">
                       <img
@@ -173,6 +176,8 @@ function Index() {
               ))}
             </SplideTrack>
           </Splide>
+
+          
 
           <p className="text-center mt-5 fs-5">
             Want to see our Top Destinations.{" "}
@@ -477,7 +482,7 @@ function Index() {
             </div>
           </div>
         </SwiperSlide>
-
+         
         <SwiperSlide>
           <div className="row align-items-center">
             <div className="col-lg-6">
