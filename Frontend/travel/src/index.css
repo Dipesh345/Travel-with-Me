@@ -39,6 +39,7 @@ body {
 }
 
 /* NAVBAR STYLES */
+/* Navbar base */
 .custom-nav {
   padding: 0 12%;
   height: 80px;
@@ -52,14 +53,16 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
 }
+
 nav {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: white; /* or your theme color */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* optional */
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
+/* Navbar themes */
 .white-them {
   background-color: transparent !important;
 }
@@ -70,7 +73,7 @@ nav {
 }
 
 .black-them {
-  background: linear-gradient(90deg, #000000, #ff0000) !important;
+  background: #004080 !important;
 }
 
 .black-them a,
@@ -78,6 +81,7 @@ nav {
   color: #fff !important;
 }
 
+/* Site title */
 .site-title {
   font-family: var(--Kings-font);
   font-size: 1.8rem;
@@ -90,6 +94,7 @@ nav {
   color: red;
 }
 
+/* Navigation links */
 .nav-link {
   position: relative;
   padding-bottom: 5px;
@@ -113,6 +118,77 @@ nav {
 .nav-link.active::after {
   width: 100%;
 }
+
+.me-3 {
+  margin-right: 1rem;
+}
+
+/* Dropdown menu fix for "My Profile" text color */
+.dropdown-menu {
+  background-color: #fff !important;
+  color: black !important;
+}
+
+.dropdown-menu .dropdown-item {
+  color: black !important;
+}
+
+.dropdown-menu .text-profile {
+  color: black !important;
+}
+
+.dropdown-menu .text-profile:hover,
+.dropdown-menu .text-profile:focus {
+  color: black !important;
+  background-color: #f8f9fa;
+}
+
+/* Force search bar input and buttons to white background and black text */
+.input-group {
+  display: flex;
+  align-items: center;
+}
+
+input.form-control {
+  height: 40px !important;
+  padding: 0 12px !important;
+  line-height: 40px !important;
+  background-color: white !important;
+  color: black !important;
+}
+
+.input-group .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px !important;
+  padding: 0 12px !important;
+  background-color: white !important;
+  color: black !important;
+  border-color: #ccc !important;
+}
+
+.input-group .btn:hover,
+.input-group .btn:focus {
+  background-color: #f0f0f0 !important;
+  color: black !important;
+}
+
+
+/* Mic buttons style */
+.btn.btn-light.rounded-circle {
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid #ccc !important;
+}
+
+.btn.btn-light.rounded-circle:hover,
+.btn.btn-light.rounded-circle:focus {
+  background-color: #f0f0f0 !important;
+  color: black !important;
+}
+
+/* Responsive */
 @media (max-width: 991px) {
   .custom-nav {
     padding: 0 5%;
@@ -120,9 +196,6 @@ nav {
     border-bottom-left-radius: 60px;
     border-bottom-right-radius: 60px;
   }
-.dropdown-item.custom-black {
-  color: black !important;
-}
 
   .site-title {
     font-size: 1.5rem;
@@ -133,15 +206,6 @@ nav {
   }
 }
 
-.me-3 {
-  margin-right: 1rem;
-}
-
-.dropdown-item.custom-black {
-  color: black !important;
-}
-
-/* Mobile screens */
 @media (max-width: 767px) {
   .custom-nav {
     flex-direction: column;
@@ -164,7 +228,6 @@ nav {
   }
 }
 
-/* Smallest devices */
 @media (max-width: 575px) {
   .custom-nav {
     padding: 10px 3%;
@@ -178,13 +241,13 @@ nav {
     font-size: 1.1rem;
   }
 }
-/* Style the offcanvas background and text */
+
+/* Offcanvas */
 .offcanvas {
   background-color: var(--footer-color);
   color: var(--white);
 }
 
-/* Style the menu links inside the offcanvas */
 .offcanvas .nav-link {
   color: var(--white);
   font-size: 1.2rem;
@@ -195,6 +258,7 @@ nav {
 .offcanvas .nav-link:hover {
   color: var(--secondary-color);
 }
+
 
 .hero {
           height: 100vh;

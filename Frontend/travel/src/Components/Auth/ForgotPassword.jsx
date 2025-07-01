@@ -1,8 +1,10 @@
-// src/Components/Auth/ForgotPassword.jsx
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import '../../styles/forgetpassword.css';
+import backgroundImage from '../../assets/forgot-bg.webp'; 
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -17,9 +19,9 @@ const ForgotPassword = () => {
         email: email,
       });
       toast.success(response.data.message);
-      setEmail(''); // clear input on success
+      setEmail('');
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
+      if (err.response?.data?.error) {
         toast.error(err.response.data.error);
       } else {
         toast.error('Something went wrong. Please try again.');
@@ -30,28 +32,34 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: '400px' }}>
-      <h2 className="mb-3">Forgot Password</h2>
-      <p className="text-muted">Enter your email to receive a password reset link.</p>
+    <div
+      className="forgot-container"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
+    >
+      <div className="forgot-card">
+        <h2>Forgot Password</h2>
+        <p>Enter your email to receive a password reset link.</p>
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group mb-3">
-          <label htmlFor="email">Email address</label>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="email">Email Address</label>
           <input
             type="email"
             id="email"
-            className="form-control"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="Enter your email"
           />
-        </div>
 
-        <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-          {loading ? 'Sending...' : 'Send Reset Link'}
-        </button>
-      </form>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Sending...' : 'Send Reset Link'}
+          </button>
+        </form>
+
+        <div className="back-login">
+          <Link to="/login">← Back to Login</Link>
+        </div>
+      </div>
 
       <ToastContainer position="top-center" autoClose={3000} />
     </div>

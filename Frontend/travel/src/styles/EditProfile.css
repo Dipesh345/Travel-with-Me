@@ -1,0 +1,153 @@
+/* Background */
+.edit-profile-bg {
+  background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80')
+    center/cover no-repeat fixed;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  min-height: 100vh;
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Container with frosted glass */
+.edit-profile-container {
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 16px;
+  padding: 40px 30px;
+  max-width: 700px;
+  width: 100%;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  color: #222;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Heading */
+.edit-profile-heading {
+  font-weight: 700;
+  font-size: 2.25rem;
+  text-align: center;
+  color: #f9f9f9;
+  margin-bottom: 40px;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Form groups */
+.edit-profile-form .form-group {
+  margin-bottom: 25px;
+  position: relative;
+}
+
+/* Floating label style */
+.floating-label {
+  position: relative;
+  margin-bottom: 1.8rem;
+}
+
+.floating-label input {
+  width: 100%;
+  padding: 14px 12px;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: none;
+  background: #ffffffcc;
+  color: #222;
+}
+
+.floating-label input::placeholder {
+  color: #888;
+  font-style: italic;
+}
+
+.floating-label label {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  color: #555;
+  pointer-events: none;
+  background: transparent;
+  transition: 0.2s;
+}
+
+.floating-label input:focus + label,
+.floating-label input:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 12px;
+  font-size: 0.75rem;
+  color: #28a745;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+/* Profile image input (no floating label) */
+.edit-profile-form input[type="file"] {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 1rem;
+  color: #222;
+  background-color: #ffffffcc;
+  box-shadow: inset 0 0 7px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.edit-profile-form input[type="file"]:focus {
+  outline: none;
+  box-shadow: 0 0 6px 3px rgba(25, 135, 84, 0.5);
+  background-color: #fff;
+}
+
+/* Image preview */
+.preview-image {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.preview-image img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #ffffffdd;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Buttons container */
+.edit-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 35px;
+}
+
+/* Buttons style */
+.edit-buttons .btn {
+  min-width: 140px;
+  font-weight: 600;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.2);
+  transition: all 0.25s ease-in-out;
+  cursor: pointer;
+}
+
+.edit-buttons .btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* Disabled button */
+.edit-buttons .btn:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+/* Loader */
+.edit-loader {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.5);
+}

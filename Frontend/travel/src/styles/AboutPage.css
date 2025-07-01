@@ -348,6 +348,52 @@ body {
   display: grid;
   place-items: center;
 }
+.filter-dropdown-container {
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #223c66;
+}
+
+.filter-label {
+  white-space: nowrap;
+}
+
+.filter-dropdown-container {
+  margin: 0 auto 2rem auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #000;
+  max-width: 300px;
+  justify-content: center;
+}
+
+.filter-label {
+  white-space: nowrap;
+}
+
+.filter-dropdown {
+  padding: 0.4rem 0.6rem;
+  border: 2px solid #223c66;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: white;
+  color: #000;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.filter-dropdown:hover,
+.filter-dropdown:focus {
+  border-color: #000;
+  outline: none;
+}
 
 .button-and-avatars {
   display: flex;

@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { FaLock } from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
+import "../../styles/changePassword.css";
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
@@ -45,7 +47,6 @@ const ChangePassword = () => {
       toast.success(response.data.success || "Password changed successfully.");
       setFormData({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
 
-      // Redirect after delay
       setTimeout(() => {
         navigate("/profile");
       }, 2000);
@@ -64,58 +65,68 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "400px" }}>
-      <h2>Change Password</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group mb-3">
-          <label htmlFor="oldPassword">Old Password</label>
-          <input
-            type="password"
-            id="oldPassword"
-            name="oldPassword"
-            className="form-control"
-            value={formData.oldPassword}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="newPassword">New Password</label>
-          <input
-            type="password"
-            id="newPassword"
-            name="newPassword"
-            className="form-control"
-            value={formData.newPassword}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group mb-3">
-          <label htmlFor="confirmNewPassword">Confirm New Password</label>
-          <input
-            type="password"
-            id="confirmNewPassword"
-            name="confirmNewPassword"
-            className="form-control"
-            value={formData.confirmNewPassword}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="btn btn-primary w-100"
-          disabled={loading}
-        >
-          {loading ? "Changing..." : "Change Password"}
-        </button>
-      </form>
+    <>
       <ToastContainer position="top-center" autoClose={3000} />
-    </div>
+      <div className="password-container">
+        <div className="password-card">
+          <h2>Change Password</h2>
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="form-group">
+              <FaLock className="input-icon" />
+              <input
+                type="password"
+                id="oldPassword"
+                name="oldPassword"
+                value={formData.oldPassword}
+                onChange={handleChange}
+                placeholder=" "
+                className="form-control"
+                required
+              />
+              <label htmlFor="oldPassword">Old Password</label>
+            </div>
+
+            <div className="form-group">
+              <FaLock className="input-icon" />
+              <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                value={formData.newPassword}
+                onChange={handleChange}
+                placeholder=" "
+                className="form-control"
+                required
+              />
+              <label htmlFor="newPassword">New Password</label>
+            </div>
+
+            <div className="form-group">
+              <FaLock className="input-icon" />
+              <input
+                type="password"
+                id="confirmNewPassword"
+                name="confirmNewPassword"
+                value={formData.confirmNewPassword}
+                onChange={handleChange}
+                placeholder=" "
+                className="form-control"
+                required
+              />
+              <label htmlFor="confirmNewPassword">Confirm New Password</label>
+            </div>
+
+            <button
+              type="submit"
+              className="submit-btn"
+              disabled={loading}
+            >
+              {loading ? "Changing..." : "Change Password"}
+            </button>
+          </form>
+        </div>
+      </div>
+    </>
   );
 };
 

@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "../../styles/login.css";
+import loginBg from "../../assets/login.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -24,13 +22,8 @@ const Login = () => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/auth/token/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -38,20 +31,13 @@ const Login = () => {
       if (response.ok) {
         localStorage.setItem("access_token", data.access);
         localStorage.setItem("refresh_token", data.refresh);
-
         toast.success("Login successful!");
-
         setFormData({ username: "", password: "" });
-
-        setTimeout(() => {
-          navigate("/");  // Redirect to homepage after login
-        }, 1500);
+        setTimeout(() => navigate("/"), 1500);
       } else {
-        const errorMessage = data.detail || "Login failed. Check credentials.";
-        toast.error(errorMessage);
+        toast.error(data.detail || "Invalid credentials.");
       }
     } catch (error) {
-      console.error("Login error:", error);
       toast.error("An error occurred during login.");
     } finally {
       setLoading(false);
@@ -62,130 +48,72 @@ const Login = () => {
     <>
       <ToastContainer autoClose={3000} position="top-center" />
 
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{
-          minHeight: "100vh",
-          background: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)",
-          padding: "20px",
-        }}
-      >
-        <div
-          className="card p-4 shadow"
-          style={{
-            maxWidth: "420px",
-            width: "100%",
-            borderRadius: "20px",
-            backgroundColor: "rgba(255, 255, 255, 0.95)",
-          }}
-        >
-          <h2
-            className="mb-4 text-center"
-            style={{
-              fontWeight: "700",
-              fontFamily: "'Poppins', sans-serif",
-              color: "#6610f2",
-            }}
-          >
-            Welcome Back
-          </h2>
+      <div className="login-full-wrapper">
+        <div className="background-angle"></div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label
-                htmlFor="username"
-                className="form-label fw-semibold"
-                style={{ color: "#333" }}
-              >
-                Username
-              </label>
+        <div className="login-box">
+          <div
+            className="login-image"
+            style={{ backgroundImage: `url(${loginBg})` }}
+          >
+            <div className="quote">
+              TRAVEL IS THE ONLY THING<br />YOU BUY THAT MAKES YOU RICHER
+            </div>
+          </div>
+
+          <div className="login-form">
+            <h2 className="brand-title">TRAVEL BLOGGER</h2>
+
+            <div className="social-icons">
+              <i className="fab fa-facebook-f"></i>
+              <i className="fab fa-google"></i>
+              <i className="fab fa-linkedin-in"></i>
+            </div>
+
+            <p className="or-text">or use your email account</p>
+
+            <form onSubmit={handleSubmit}>
               <input
-                id="username"
                 type="text"
-                className="form-control shadow-sm"
-                placeholder="Your username"
                 name="username"
+                placeholder="Email"
                 value={formData.username}
                 onChange={handleChange}
                 required
-                style={{
-                  borderRadius: "12px",
-                  borderColor: "#a6c1ee",
-                  padding: "12px 15px",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "#6610f2")}
-                onBlur={(e) => (e.target.style.borderColor = "#a6c1ee")}
               />
+
+              <div className="password-field">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                <span
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                </span>
+              </div>
+
+              <Link to="/forgot-password" className="forgot-link">
+                Forgot Your Password?
+              </Link>
+
+              <button type="submit" disabled={loading}>
+                {loading ? "Logging in..." : "LOG IN"}
+              </button>
+            </form>
+
+            <div className="register-text">
+              Don’t have an account?{" "}
+              <Link to="/register" className="register-link">
+                Register
+              </Link>
             </div>
-
-            <div className="mb-4">
-              <label
-                htmlFor="password"
-                className="form-label fw-semibold"
-                style={{ color: "#333" }}
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                className="form-control shadow-sm"
-                placeholder="Enter your password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                style={{
-                  borderRadius: "12px",
-                  borderColor: "#a6c1ee",
-                  padding: "12px 15px",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "#6610f2")}
-                onBlur={(e) => (e.target.style.borderColor = "#a6c1ee")}
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary w-100 fw-bold"
-              style={{
-                borderRadius: "14px",
-                padding: "12px",
-                fontSize: "1.1rem",
-                background: "linear-gradient(90deg, #6610f2 0%, #0d6efd 100%)",
-                border: "none",
-                boxShadow:
-                  "0 6px 12px rgba(102, 16, 242, 0.4), 0 3px 6px rgba(13, 110, 253, 0.3)",
-                transition: "background 0.3s ease",
-              }}
-              onMouseOver={(e) =>
-                (e.currentTarget.style.background =
-                  "linear-gradient(90deg, #0d6efd 0%, #6610f2 100%)")
-              }
-              onMouseOut={(e) =>
-                (e.currentTarget.style.background =
-                  "linear-gradient(90deg, #6610f2 0%, #0d6efd 100%)")
-              }
-              disabled={loading}
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </form>
-
-          <div
-            className="text-center mt-3"
-            style={{ fontSize: "0.95rem", color: "#555" }}
-          >
-            Don't have an account?{" "}
-            <Link to="/register" style={{ color: "#6610f2", fontWeight: "600" }}>
-              Register
-            </Link>
-          </div>
-
-          <div className="text-center mt-2">
-            <Link to="/forgot-password" style={{ fontSize: "0.9rem", color: "#0d6efd" }}>
-              Forgot password?
-            </Link>
           </div>
         </div>
       </div>

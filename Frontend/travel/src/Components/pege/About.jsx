@@ -1,3 +1,4 @@
+// About.jsx
 import React, { useState } from "react";
 import "../../styles/AboutPage.css";
 import pricingPlans from "../../data/pricing";
@@ -26,6 +27,9 @@ export default function About() {
     email: "",
     date: "",
   });
+
+  // Filter state
+  const [filter, setFilter] = useState("all");
 
   const experienceCards = [
     { image: experience1, title: "America" },
@@ -56,6 +60,12 @@ export default function About() {
     );
     closeModal();
   };
+
+  // Filter pricing plans by category
+  const filteredPlans =
+    filter === "all"
+      ? pricingPlans
+      : pricingPlans.filter((plan) => plan.category === filter);
 
   return (
     <>
@@ -191,13 +201,31 @@ export default function About() {
         </div>
       </section>
 
-      {/* Pricing Section with Book Now buttons */}
+      {/* Pricing Section with Dropdown filter */}
       <section className="pricing-section">
         <h3 className="section-subtitle">✦ Get To Know Us</h3>
         <h2 className="section-title">Best Holiday Package</h2>
 
+        {/* Dropdown Filter */}
+        <div className="filter-dropdown-container">
+          <label htmlFor="categoryFilter" className="filter-label">
+            Filter by category:
+          </label>
+          <select
+            id="categoryFilter"
+            className="filter-dropdown"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="all">All</option>
+            <option value="family">Family</option>
+            <option value="couple">Couple</option>
+            <option value="adventure">Adventure</option>
+          </select>
+        </div>
+
         <div className="pricing-cards">
-          {pricingPlans.map((plan, index) => (
+          {filteredPlans.map((plan, index) => (
             <div className="pricing-card slide-in" key={index}>
               <div className="price">
                 <span className="amount">{plan.price}</span>
@@ -212,7 +240,6 @@ export default function About() {
                 ))}
               </ul>
 
-              {/* Book Now button opens modal */}
               <button className="get-started-btn" onClick={() => openModal(plan)}>
                 Book Now
               </button>
@@ -226,7 +253,7 @@ export default function About() {
         <div className="modal-overlay" onClick={closeModal}>
           <div
             className="modal-content"
-            onClick={(e) => e.stopPropagation()} // prevent modal close on clicking inside
+            onClick={(e) => e.stopPropagation()}
           >
             <button className="modal-close" onClick={closeModal}>
               &times;
@@ -273,17 +300,6 @@ export default function About() {
           </div>
         </div>
       )}
-
-      {/* Bottom Text */}
-      <p className="text-center mt-5 fs-5">
-        Want to see our Top Deals?{" "}
-        <a
-          href="#"
-          className="text-primary text-decoration-underline fw-semibold"
-        >
-          Click here to View More
-        </a>
-      </p>
     </>
   );
 }

@@ -4,6 +4,7 @@ import { FaSave, FaUndo } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "../../styles/EditProfile.css";
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const EditProfile = () => {
         setFormData({
           username,
           email,
-          preferences: JSON.stringify(preferences || {}, null, 2),
+          preferences: (preferences?.activities || []).join(", "),
           travel_history: (travel_history || []).join(", "),
           profile_image: null,
         });
@@ -61,7 +62,10 @@ const EditProfile = () => {
     setSaving(true);
 
     try {
-      const preferencesJSON = JSON.parse(formData.preferences);
+      const preferencesList = formData.preferences
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item !== "");
       const travelHistoryList = formData.travel_history
         .split(",")
         .map((item) => item.trim())
@@ -70,7 +74,7 @@ const EditProfile = () => {
       const data = new FormData();
       data.append("username", formData.username);
       data.append("email", formData.email);
-      data.append("preferences", JSON.stringify(preferencesJSON));
+      data.append("preferences", JSON.stringify({ activities: preferencesList }));
       data.append("travel_history", JSON.stringify(travelHistoryList));
       if (formData.profile_image) {
         data.append("profile_image", formData.profile_image);
@@ -100,105 +104,109 @@ const EditProfile = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="spinner-border text-primary" role="status" />
+      <div className="edit-loader">
+        <div className="spinner-border text-success" role="status" />
       </div>
     );
   }
 
   return (
-    <div className="container my-5" style={{ maxWidth: "700px" }}>
+    <div className="edit-profile-bg">
       <ToastContainer />
-      <h2 className="mb-4 fw-bold text-center">✏️ Edit Your Profile</h2>
-      <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow">
-        <div className="mb-3">
-          <label className="form-label fw-semibold">Username</label>
-          <input
-            type="text"
-            name="username"
-            className="form-control"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
+      <div className="edit-profile-container">
+        <h2 className="edit-profile-heading">✏️ Edit Your Profile</h2>
+        <form onSubmit={handleSubmit} className="edit-profile-form" noValidate>
+          {/* Username */}
+          <div className="form-group floating-label">
+            <input
+              id="username"
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              autoComplete="Abcde"
+              placeholder=" "
+            />
+            <label htmlFor="username">Username</label>
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label fw-semibold">Email</label>
-          <input
-            type="email"
-            name="email"
-            className="form-control"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          {/* Email */}
+          <div className="form-group floating-label">
+            <input
+              id="email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              autoComplete="e.g.: abc@gmail.com"
+              placeholder=" "
+            />
+            <label htmlFor="email">Email</label>
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label fw-semibold">Preferences (JSON format)</label>
-          <textarea
-            name="preferences"
-            className="form-control"
-            rows="4"
-            value={formData.preferences}
-            onChange={handleChange}
-            placeholder={`Example:\n{\n  "activities": ["hiking", "sightseeing"],\n  "budget": "medium"\n}`}
-          />
-        </div>
+          {/* Preferences */}
+          <div className="form-group floating-label">
+            <input
+              id="preferences"
+              type="text"
+              name="preferences"
+              value={formData.preferences}
+              onChange={handleChange}
+              placeholder="e.g., hiking, sightseeing"
+              autoComplete="off"
+            />
+            <label htmlFor="preferences">Preferences (comma-separated)</label>
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label fw-semibold">Travel History (comma-separated)</label>
-          <input
-            type="text"
-            name="travel_history"
-            className="form-control"
-            value={formData.travel_history}
-            onChange={handleChange}
-            placeholder="e.g., Nepal, Thailand, Japan"
-          />
-        </div>
+          {/* Travel History */}
+          <div className="form-group floating-label">
+            <input
+              id="travel_history"
+              type="text"
+              name="travel_history"
+              value={formData.travel_history}
+              onChange={handleChange}
+              placeholder="e.g., Nepal, Japan, Thailand "
+              autoComplete="off"
+            />
+            <label htmlFor="travel_history">Travel History (comma-separated)</label>
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label fw-semibold">Profile Image</label>
-          <input
-            type="file"
-            name="profile_image"
-            className="form-control"
-            accept="image/*"
-            onChange={handleChange}
-          />
-          {preview && (
-            <div className="mt-2 text-center">
-              <img
-                src={preview}
-                alt="Preview"
-                className="rounded-circle border mt-2"
-                style={{ width: "120px", height: "120px", objectFit: "cover" }}
-              />
-            </div>
-          )}
-        </div>
+          {/* Profile Image */}
+          <div className="form-group">
+            <input
+              id="profile_image"
+              type="file"
+              name="profile_image"
+              accept="image/*"
+              onChange={handleChange}
+            />
+            {preview && (
+              <div className="preview-image">
+                <img src={preview} alt="Preview" />
+              </div>
+            )}
+          </div>
 
-        <div className="d-flex justify-content-between mt-4">
-          <button
-            type="submit"
-            className="btn btn-primary d-flex align-items-center gap-2"
-            disabled={saving}
-          >
-            <FaSave />
-            {saving ? "Saving..." : "Save Changes"}
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary d-flex align-items-center gap-2"
-            onClick={() => navigate("/profile")}
-          >
-            <FaUndo />
-            Cancel
-          </button>
-        </div>
-      </form>
+          {/* Buttons */}
+          <div className="edit-buttons">
+            <button type="submit" className="btn btn-success" disabled={saving}>
+              <FaSave className="me-2" />
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => navigate("/profile")}
+            >
+              <FaUndo className="me-2" />
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

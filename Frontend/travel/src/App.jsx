@@ -25,7 +25,6 @@ function AppContent() {
   const noNavRoutes = [
     '/register',
     '/login',
-    '/profile',
     '/edit-profile',
     '/change-password',
     '/forgot-password',
