@@ -320,11 +320,18 @@ export default function Details() {
 
       <section className="additional-info" style={{ padding: "2rem 0" }}>
         <div className="container">
-          {tour && <WeatherForecastInline city={tour.city} />}
-          <VisaCheckerInline
-            nationality={user?.nationality || ""}
-            destination={tour?.country_code || ""}
-          />
+        {tour && <WeatherForecastInline city={tour.city} />}
+
+        {user &&
+          tour &&
+          user.nationality &&
+          tour.country_code &&
+          user.nationality.toUpperCase() !== tour.country_code.toUpperCase() && (
+            <VisaCheckerInline
+              nationality={user.nationality}
+              destination={tour.country_code}
+            />
+          )}
         </div>
       </section>
     </div>

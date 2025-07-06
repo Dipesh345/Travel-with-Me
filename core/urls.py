@@ -9,7 +9,7 @@ from .views import (
     TourDetailAPIView, TourRatingCreateUpdateAPIView,
     BookingCreateAPIView, BookingDetailAPIView, BookingByTourAPIView,
     UserBookingsAPIView, CategoryListView, CommentRetrieveUpdateDestroyView,
-    toggle_comment_like
+    toggle_comment_like, BookingPaymentUpdateAPIView, CreatePaymentIntentView,
 )
 
 urlpatterns = [
@@ -50,10 +50,15 @@ urlpatterns = [
     path('tours/', TourListAPIView.as_view(), name='tour-list'),
     path('tours/<int:pk>/', TourDetailAPIView.as_view(), name='tour-detail'),
     path('tours/<int:tour_id>/rate/', TourRatingCreateUpdateAPIView.as_view(), name='tour-rate'),
-    path('bookings/', UserBookingsAPIView.as_view(), name='user-bookings'),
-    path('bookings/create/', BookingCreateAPIView.as_view(), name='booking-create'),
-    path('bookings/<int:pk>/', BookingDetailAPIView.as_view(), name='booking-detail'),
-    path('bookings/by-tour/<int:tour_id>/', BookingByTourAPIView.as_view(), name='booking-by-tour'),
+    path("bookings/", UserBookingsAPIView.as_view(), name="user-bookings"),
+    path("bookings/create/", BookingCreateAPIView.as_view(), name="create-booking"),
+    path("bookings/<int:pk>/", BookingDetailAPIView.as_view(), name="booking-detail"),
+    path("bookings/by-tour/<int:tour_id>/", BookingByTourAPIView.as_view(), name="booking-by-tour"),
+    path("bookings/<int:pk>/pay/", BookingPaymentUpdateAPIView.as_view(), name="booking-payment-update"),
+
+    
+
+    path('payments/create-payment-intent/', CreatePaymentIntentView.as_view(), name='create-payment-intent'),
 
 
 ]

@@ -12,9 +12,9 @@ admin.site.register(ContactMessage)
 
 @admin.register(Tour)
 class TourAdmin(admin.ModelAdmin):
-    list_display = ['title', 'country', 'price', 'days', 'type']
-    search_fields = ['title', 'country']
-    list_filter = ['type', 'country']
+    list_display = ('title', 'city', 'country', 'type', 'price')
+    search_fields = ('title', 'city', 'country')
+
 
 admin.site.register(Booking)
 admin.site.register(Category)

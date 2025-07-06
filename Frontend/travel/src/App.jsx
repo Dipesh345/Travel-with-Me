@@ -11,6 +11,7 @@ import ForgotPassword from './Components/Auth/ForgotPassword';
 import ResetPassword from './Components/Auth/ResetPassword';
 import AboutPage from './Components/pege/About';
 import Tours from './Components/pege/Tours';
+import PaymentPage from './Components/pege/PaymentPage';
 import Blog from './Components/pege/Blog';
 import BlogDetail from './Components/pege/BlogDetail';
 import Contact from './Components/pege/Contact';
@@ -49,6 +50,7 @@ function AppContent() {
         <Route path="/edit-booking/:id" element={<EditBooking />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/tour" element={<Tours />} />
+        <Route path="/booking/:id/payment" element={<PaymentPage />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogDetail />} />
         <Route path="/contact" element={<Contact />} />

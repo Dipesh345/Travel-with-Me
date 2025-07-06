@@ -154,13 +154,18 @@ class BookingSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     tour = serializers.PrimaryKeyRelatedField(queryset=Tour.objects.all())
     tour__title = serializers.CharField(source='tour.title', read_only=True)
+    tour__price = serializers.DecimalField(source='tour.price', read_only=True, max_digits=10, decimal_places=2)
 
     class Meta:
         model = Booking
         fields = [
             'id', 'user', 'tour', 'people', 'name', 'email', 'phone', 'booking_date',
-            'status', 'booked_at', 'tour__title'
+            'status', 'booked_at', 'tour__title', 'tour__price',
+            'payment_method', 'payment_status', 'payment_amount',
+            'payment_date', 'transaction_id',
+            'cancellation_reason', 'refunded_amount', 'refund_date', 'refund_reason',
         ]
+        read_only_fields = ['payment_status', 'payment_date', 'transaction_id', 'refund_date', 'booked_at']
 
 class TourRatingCreateSerializer(serializers.ModelSerializer):
     class Meta:

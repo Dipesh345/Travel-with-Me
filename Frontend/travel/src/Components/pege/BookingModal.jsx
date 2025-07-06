@@ -32,7 +32,7 @@ export default function BookingModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-content p-4">
-          <div className="modal-header">
+          <div className="modal-header border-0 pb-3">
             <h5 className="modal-title">
               {booking && booking.status !== "cancelled" ? "Edit Booking" : "New Booking"}
             </h5>
@@ -46,34 +46,49 @@ export default function BookingModal({
                 background: "transparent",
                 fontSize: "1.5rem",
                 cursor: "pointer",
+                lineHeight: 1,
               }}
             >
               ×
             </button>
           </div>
 
-          <div className="modal-body">
+          <div className="modal-body pt-0">
             {booking && booking.status !== "cancelled" ? (
-              <form className="booking-form mt-4" onSubmit={onUpdateBooking}>
-                <div className="form-group mb-3">
-                  <label>Tour</label>
-                  <input type="text" className="form-control" value={tour.title} readOnly />
-                </div>
-
-                <div className="form-group mb-3">
-                  <label>Booking Date</label>
+              <form className="booking-form mt-3" onSubmit={onUpdateBooking}>
+                <div className="mb-3">
+                  <label htmlFor="tourTitle" className="form-label">
+                    Tour
+                  </label>
                   <input
                     type="text"
+                    id="tourTitle"
+                    className="form-control"
+                    value={tour.title}
+                    readOnly
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="bookingDate" className="form-label">
+                    Booking Date
+                  </label>
+                  <input
+                    type="text"
+                    id="bookingDate"
                     className="form-control"
                     value={booking.booking_date || ""}
                     readOnly
                   />
                 </div>
 
-                <div className="form-group mb-3">
-                  <label>Number of People</label>
+                <div className="mb-3">
+                  <label htmlFor="peopleInput" className="form-label">
+                    Number of People
+                  </label>
                   <input
                     type="number"
+                    id="peopleInput"
                     className="form-control"
                     min="1"
                     value={people}
@@ -82,12 +97,20 @@ export default function BookingModal({
                   />
                 </div>
 
-                <div className="form-group mb-3">
-                  <label>Status</label>
-                  <input type="text" className="form-control" value={booking.status} readOnly />
+                <div className="mb-4">
+                  <label htmlFor="statusInput" className="form-label">
+                    Status
+                  </label>
+                  <input
+                    type="text"
+                    id="statusInput"
+                    className="form-control"
+                    value={booking.status}
+                    readOnly
+                  />
                 </div>
 
-                <div className="d-flex gap-2">
+                <div className="d-flex gap-2 justify-content-end">
                   <button
                     type="submit"
                     className="btn btn-primary d-flex align-items-center gap-2"
@@ -107,11 +130,14 @@ export default function BookingModal({
                 </div>
               </form>
             ) : (
-              <form className="booking-form mt-4" onSubmit={onCreateBooking}>
-                <div className="form-group mb-3">
-                  <label>Name</label>
+              <form className="booking-form mt-3" onSubmit={onCreateBooking}>
+                <div className="mb-3">
+                  <label htmlFor="nameInput" className="form-label">
+                    Name
+                  </label>
                   <input
                     type="text"
+                    id="nameInput"
                     className="form-control"
                     value={newBookingData.name}
                     onChange={(e) =>
@@ -121,10 +147,13 @@ export default function BookingModal({
                   />
                 </div>
 
-                <div className="form-group mb-3">
-                  <label>Email</label>
+                <div className="mb-3">
+                  <label htmlFor="emailInput" className="form-label">
+                    Email
+                  </label>
                   <input
                     type="email"
+                    id="emailInput"
                     className="form-control"
                     value={newBookingData.email}
                     onChange={(e) =>
@@ -134,10 +163,13 @@ export default function BookingModal({
                   />
                 </div>
 
-                <div className="form-group mb-3">
-                  <label>Phone</label>
+                <div className="mb-3">
+                  <label htmlFor="phoneInput" className="form-label">
+                    Phone
+                  </label>
                   <input
                     type="tel"
+                    id="phoneInput"
                     className="form-control"
                     value={newBookingData.phone}
                     onChange={(e) =>
@@ -147,10 +179,13 @@ export default function BookingModal({
                   />
                 </div>
 
-                <div className="form-group mb-3">
-                  <label>Number of People</label>
+                <div className="mb-3">
+                  <label htmlFor="peopleNewInput" className="form-label">
+                    Number of People
+                  </label>
                   <input
                     type="number"
+                    id="peopleNewInput"
                     className="form-control"
                     min="1"
                     value={newBookingData.people}
@@ -161,10 +196,13 @@ export default function BookingModal({
                   />
                 </div>
 
-                <div className="form-group mb-3">
-                  <label>Booking Date</label>
+                <div className="mb-4">
+                  <label htmlFor="bookingDateNewInput" className="form-label">
+                    Booking Date
+                  </label>
                   <input
                     type="date"
+                    id="bookingDateNewInput"
                     className="form-control"
                     value={newBookingData.booking_date}
                     onChange={(e) =>
@@ -174,7 +212,7 @@ export default function BookingModal({
                   />
                 </div>
 
-                <div className="d-flex gap-2">
+                <div className="d-flex gap-2 justify-content-end">
                   <button
                     type="submit"
                     className="btn btn-primary d-flex align-items-center gap-2"
