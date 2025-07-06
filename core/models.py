@@ -1,31 +1,38 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+from django.utils.text import slugify
+import itertools
 
+# Custom User model
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     profile_image = models.ImageField(upload_to='profiles/', null=True, blank=True)
     preferences = models.JSONField(default=dict, blank=True)  # e.g. preferred destinations
     travel_history = models.JSONField(default=list, blank=True)
+    nationality = models.CharField(
+        max_length=2, blank=True, null=True,
+        help_text="ISO country code, e.g. 'US'"
+    )
 
     def __str__(self):
         return self.username
 
-
+# Optional: User's own custom trips (separate from Tours)
 class Trip(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trips')
     title = models.CharField(max_length=255)
     start_date = models.DateField()
     end_date = models.DateField()
-    destinations = models.JSONField()  # e.g. [{'city': 'Paris', 'country': 'France'}]
+    destinations = models.JSONField()  # Example: [{'city': 'Paris', 'country': 'France'}]
     budget = models.DecimalField(max_digits=10, decimal_places=2)
-    itinerary = models.TextField(blank=True)  # plain text or markdown
+    itinerary = models.TextField(blank=True)  # Plain text or markdown
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username}'s trip to {self.destinations}"
 
-
+# Hotel model
 class Hotel(models.Model):
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
@@ -38,6 +45,7 @@ class Hotel(models.Model):
     def __str__(self):
         return self.name
 
+# Blog post category
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True, blank=True)
@@ -50,9 +58,7 @@ class Category(models.Model):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-from django.utils.text import slugify
-import itertools
-
+# Blog model
 class Blog(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blogs')
     title = models.CharField(max_length=255)
@@ -81,6 +87,7 @@ class Blog(models.Model):
             self.slug = slug
         super().save(*args, **kwargs)
 
+# Blog comments with threading
 class Comment(models.Model):
     blog = models.ForeignKey('Blog', on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -95,7 +102,7 @@ class Comment(models.Model):
     def is_reply(self):
         return self.parent is not None
 
-
+# Emergency contact for user
 class EmergencyContact(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -105,6 +112,7 @@ class EmergencyContact(models.Model):
     def __str__(self):
         return f"Emergency Contact for {self.user.username}"
 
+# Contact messages from visitors
 class ContactMessage(models.Model):
     full_name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -116,6 +124,7 @@ class ContactMessage(models.Model):
     def __str__(self):
         return f"{self.full_name} - {self.subject}"
 
+# Main Tour model
 class Tour(models.Model):
     TOUR_TYPES = [
         ('Luxury', 'Luxury'),
@@ -126,9 +135,15 @@ class Tour(models.Model):
     ]
 
     title = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
+    country_code = models.CharField(
+        max_length=2, blank=True, null=True,
+        help_text="ISO 3166-1 alpha-2 code e.g. 'NP'"
+    )
     days = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=3, default='USD', help_text="ISO 4217 currency code")
     image = models.ImageField(upload_to='tours/')
     type = models.CharField(max_length=50, choices=TOUR_TYPES)
     activities = models.JSONField(default=list, blank=True)
@@ -137,29 +152,73 @@ class Tour(models.Model):
     insurance_coverage = models.CharField(max_length=100, default="Not Covered")
     language = models.CharField(max_length=100, default="English")
     hotel_transfer = models.BooleanField(default=False)
+    capacity = models.PositiveIntegerField(default=0, help_text="Max people (0 = unlimited)")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('title', 'city', 'country')
 
     def __str__(self):
         return self.title
 
+# Booking model for tours
 class Booking(models.Model):
     STATUS_CHOICES = [
-        ('active', 'Active'),
+        ('pending', 'Pending'),      # booked but payment not done
+        ('confirmed', 'Confirmed'),  # payment received, booking confirmed
         ('cancelled', 'Cancelled'),
+        ('completed', 'Completed'),
+        ('refunded', 'Refunded'),    # fully refunded
+        ('partial_refunded', 'Partial Refunded'),
     ]
+
+    PAYMENT_METHODS = [
+        ('paypal', 'PayPal'),
+        ('stripe', 'Stripe'),
+        ('cash', 'Cash'),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='bookings')
     people = models.PositiveIntegerField(default=1)
-    name = models.CharField(max_length=255, null=True, blank=True)
+
+    name = models.CharField(max_length=255, null=True, blank=True)  
     email = models.EmailField(null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
+
     booking_date = models.DateField(null=True, blank=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     booked_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.user.username} booked {self.tour.title}"
+    # Payment details
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, null=True, blank=True)
+    payment_status = models.CharField(max_length=20, default='pending')  # e.g. pending, paid, failed
+    payment_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    payment_date = models.DateTimeField(null=True, blank=True)
+    transaction_id = models.CharField(max_length=100, null=True, blank=True)
 
+    # Refund details
+    refunded_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    refund_date = models.DateTimeField(null=True, blank=True)
+    refund_reason = models.TextField(blank=True, null=True)
+
+    cancellation_reason = models.TextField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user', 'tour', 'booking_date')
+
+    def __str__(self):
+        return f"{self.user.username} booked {self.tour.title} on {self.booking_date}"
+
+    @property
+    def is_fully_paid(self):
+        return self.payment_status == 'paid' and self.payment_amount >= (self.tour.price * self.people)
+
+    @property
+    def is_fully_refunded(self):
+        return self.refunded_amount >= self.payment_amount and self.refund_date is not None
+
+# Ratings for tours by users
 class TourRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='ratings')

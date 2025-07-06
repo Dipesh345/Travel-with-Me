@@ -8,7 +8,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'profile_image', 'preferences', 'travel_history']
+        fields = ['id', 'username', 'email', 'profile_image', 'preferences', 'travel_history', 'nationality']  # added nationality
 
 
 class TripSerializer(serializers.ModelSerializer):
@@ -126,7 +126,8 @@ class TourSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tour
         fields = [
-            'id', 'title', 'country', 'days', 'price', 'image', 'type',
+            'id', 'title', 'city', 'country', 'country_code',  # added country_code here
+            'days', 'price', 'image', 'type',
             'activities', 'description', 'admission_fee', 'insurance_coverage',
             'language', 'hotel_transfer', 'created_at',
             'average_rating', 'bookings_count',
@@ -140,6 +141,7 @@ class TourSerializer(serializers.ModelSerializer):
 
     def get_bookings_count(self, obj):
         return obj.bookings.count()
+
 
 class TourRatingSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)

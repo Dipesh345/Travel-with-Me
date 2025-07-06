@@ -16,8 +16,6 @@ import BlogDetail from './Components/pege/BlogDetail';
 import Contact from './Components/pege/Contact';
 import Details from './Components/pege/Details';
 import EditBooking from './Components/pege/EditBooking';
-import VisaChecker from "./components/VisaChecker";
-import WeatherForecast from "./components/WeatherForecast";
 import AdminRoutes from './AdminRoutes';
 
 function AppContent() {
@@ -28,8 +26,6 @@ function AppContent() {
     '/edit-profile',
     '/change-password',
     '/forgot-password',
-    '/visa-checker',
-    '/weather-forecast',
   ];
 
   const isResetPassword = location.pathname.startsWith('/reset-password/');
@@ -56,8 +52,6 @@ function AppContent() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogDetail />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/visa-checker" element={<VisaChecker />} />
-        <Route path="/weather-forecast" element={<WeatherForecast />} />
       </Routes>
       {isAdminRoute && <AdminRoutes />}
     </>
