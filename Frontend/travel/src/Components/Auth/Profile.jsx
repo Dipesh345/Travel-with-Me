@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaPlaneDeparture, FaUser, FaEnvelope, FaEdit, FaKey } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import defaultProfile from "../../assets/default-profile.jpg";
+import countries from "i18n-iso-countries";
+import enLocale from "i18n-iso-countries/langs/en.json";
+
+countries.registerLocale(enLocale);
+
+const CountryNameFromCode = ({ code }) => {
+  if (!code) return <span>Not set</span>;
+  const name = countries.getName(code.toUpperCase(), "en", { select: "official" });
+  return <span>{name || code}</span>;
+};
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -63,41 +72,50 @@ const Profile = () => {
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap"
         rel="stylesheet"
       />
-      <div className="container my-5 animate__animated animate__fadeIn" style={{ fontFamily: "'Poppins', sans-serif" }}>
-      {/* Banner */}
       <div
-        className="rounded-4 mb-3 p-5 text-white shadow-lg d-flex flex-column justify-content-center"
-        style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1280&q=80')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          minHeight: "220px",
-          textShadow: "2px 2px 8px rgba(0,0,0,0.75)",
-          fontWeight: 700,
-        }}
+        className="container my-5 animate__animated animate__fadeIn"
+        style={{ fontFamily: "'Poppins', sans-serif" }}
       >
-        <h2 className="display-4">Welcome, {user.username} 🌍</h2>
-        <p className="lead fw-semibold">Here’s your travel profile overview</p>
-      </div>
+        {/* Banner */}
+        <div
+          className="rounded-4 mb-3 p-5 text-white shadow-lg d-flex flex-column justify-content-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1280&q=80')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            minHeight: "220px",
+            textShadow: "2px 2px 8px rgba(0,0,0,0.75)",
+            fontWeight: 700,
+          }}
+        >
+          <h2 className="display-4">Welcome, {user.username} 🌍</h2>
+          <p className="lead fw-semibold">Here’s your travel profile overview</p>
+        </div>
 
-      {/* Back Button */}
-      <button
-        onClick={() => navigate(-1)}
-        className="btn btn-outline-primary d-flex align-items-center gap-2 mb-4"
-        style={{ borderRadius: "50px", padding: "0.5rem 1.5rem", fontWeight: "600", boxShadow: "0 2px 6px rgba(108, 99, 255, 0.4)" }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = "#6c63ff";
-          e.currentTarget.style.color = "white";
-          e.currentTarget.style.boxShadow = "0 4px 12px rgba(108, 99, 255, 0.7)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = "transparent";
-          e.currentTarget.style.color = "#6c63ff";
-          e.currentTarget.style.boxShadow = "0 2px 6px rgba(108, 99, 255, 0.4)";
-        }}
-      >
-        <FaArrowLeft /> Back
-      </button>
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="btn btn-outline-primary d-flex align-items-center gap-2 mb-4"
+          style={{
+            borderRadius: "50px",
+            padding: "0.5rem 1.5rem",
+            fontWeight: "600",
+            boxShadow: "0 2px 6px rgba(108, 99, 255, 0.4)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "#6c63ff";
+            e.currentTarget.style.color = "white";
+            e.currentTarget.style.boxShadow = "0 4px 12px rgba(108, 99, 255, 0.7)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "transparent";
+            e.currentTarget.style.color = "#6c63ff";
+            e.currentTarget.style.boxShadow = "0 2px 6px rgba(108, 99, 255, 0.4)";
+          }}
+        >
+          <FaArrowLeft /> Back
+        </button>
 
         {/* Profile Card */}
         <div
@@ -108,8 +126,10 @@ const Profile = () => {
             border: "1px solid rgba(255, 255, 255, 0.3)",
             transition: "box-shadow 0.3s ease",
           }}
-          onMouseEnter={(e) => e.currentTarget.style.boxShadow = "0 8px 32px rgba(31, 38, 135, 0.37)"}
-          onMouseLeave={(e) => e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)"}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.boxShadow = "0 8px 32px rgba(31, 38, 135, 0.37)")
+          }
+          onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)")}
         >
           <div className="row g-4 align-items-center">
             <div className="col-md-4 text-center">
@@ -142,10 +162,15 @@ const Profile = () => {
               <p className="mb-4 fs-5 d-flex align-items-center gap-2 text-success">
                 <FaEnvelope /> {user.email}
               </p>
+              <p className="mb-4 fs-5 d-flex align-items-center gap-2 text-info">
+                <FaUser /> Nationality: <CountryNameFromCode code={user.nationality} />
+              </p>
 
               {/* Travel Preferences */}
               <section>
-                <h5 className="text-secondary fw-semibold border-bottom pb-2 mb-3">✈️ Travel Preferences</h5>
+                <h5 className="text-secondary fw-semibold border-bottom pb-2 mb-3">
+                  ✈️ Travel Preferences
+                </h5>
                 {user.preferences && Object.keys(user.preferences).length > 0 ? (
                   <div className="d-flex flex-wrap gap-3">
                     {Object.entries(user.preferences).map(([key, value]) => (
@@ -178,7 +203,9 @@ const Profile = () => {
 
               {/* Travel History */}
               <section className="mt-4">
-                <h5 className="text-secondary fw-semibold border-bottom pb-2 mb-3">🧳 Travel History</h5>
+                <h5 className="text-secondary fw-semibold border-bottom pb-2 mb-3">
+                  🧳 Travel History
+                </h5>
                 {user.travel_history && user.travel_history.length > 0 ? (
                   <div className="d-flex flex-wrap gap-3">
                     {user.travel_history.map((item, i) => (
@@ -214,21 +241,35 @@ const Profile = () => {
                 <h5 className="text-secondary fw-semibold border-bottom pb-2 mb-3">📆 My Bookings</h5>
                 {bookings.length > 0 ? (
                   bookings.map((b) => (
-                    <div key={b.id} className="p-3 mb-3 border rounded bg-light d-flex justify-content-between align-items-center flex-wrap">
+                    <div
+                      key={b.id}
+                      className="p-3 mb-3 border rounded bg-light d-flex justify-content-between align-items-center flex-wrap"
+                    >
                       <div>
-                        <strong>{b.tour__title || `Tour #${b.tour}`}</strong><br />
+                        <strong>{b.tour__title || `Tour #${b.tour}`}</strong>
+                        <br />
                         {b.booking_date} • {b.people} Person(s) • <strong>Status:</strong>{" "}
-                        <span className={`badge ${b.status === "cancelled" ? "bg-danger" : "bg-success"} text-white`}>
+                        <span
+                          className={`badge ${
+                            b.status === "cancelled" ? "bg-danger" : "bg-success"
+                          } text-white`}
+                        >
                           {b.status}
                         </span>
                       </div>
                       <div className="mt-2 mt-md-0 d-flex gap-2">
                         {b.status !== "cancelled" && (
                           <>
-                            <Link to={`/edit-booking/${b.id}`} className="btn btn-outline-primary btn-sm">
+                            <Link
+                              to={`/edit-booking/${b.id}`}
+                              className="btn btn-outline-primary btn-sm"
+                            >
                               Edit
                             </Link>
-                            <button onClick={() => handleCancelBooking(b.id)} className="btn btn-outline-danger btn-sm">
+                            <button
+                              onClick={() => handleCancelBooking(b.id)}
+                              className="btn btn-outline-danger btn-sm"
+                            >
                               Cancel
                             </button>
                           </>
@@ -245,10 +286,16 @@ const Profile = () => {
               <section className="mt-5">
                 <h5 className="text-secondary fw-semibold border-bottom pb-2 mb-3">🔐 Account Actions</h5>
                 <div className="d-flex flex-wrap gap-3">
-                  <Link to="/edit-profile" className="btn btn-outline-success d-flex align-items-center gap-2">
+                  <Link
+                    to="/edit-profile"
+                    className="btn btn-outline-success d-flex align-items-center gap-2"
+                  >
                     <FaEdit /> Edit Profile
                   </Link>
-                  <Link to="/change-password" className="btn btn-outline-primary d-flex align-items-center gap-2">
+                  <Link
+                    to="/change-password"
+                    className="btn btn-outline-primary d-flex align-items-center gap-2"
+                  >
                     <FaKey /> Change Password
                   </Link>
                 </div>

@@ -6,6 +6,10 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../styles/EditProfile.css";
 
+import countries from "i18n-iso-countries";
+import enLocale from "i18n-iso-countries/langs/en.json";
+countries.registerLocale(enLocale);
+
 const EditProfile = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("access_token");
@@ -13,6 +17,7 @@ const EditProfile = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
+    nationality: "",
     preferences: "",
     travel_history: "",
     profile_image: null,
@@ -28,10 +33,11 @@ const EditProfile = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        const { username, email, preferences, travel_history, profile_image } = res.data;
+        const { username, email, nationality, preferences, travel_history, profile_image } = res.data;
         setFormData({
           username,
           email,
+          nationality: nationality || "",
           preferences: (preferences?.activities || []).join(", "),
           travel_history: (travel_history || []).join(", "),
           profile_image: null,
@@ -74,6 +80,7 @@ const EditProfile = () => {
       const data = new FormData();
       data.append("username", formData.username);
       data.append("email", formData.email);
+      data.append("nationality", formData.nationality);
       data.append("preferences", JSON.stringify({ activities: preferencesList }));
       data.append("travel_history", JSON.stringify(travelHistoryList));
       if (formData.profile_image) {
@@ -102,6 +109,11 @@ const EditProfile = () => {
     }
   };
 
+  const countryObj = countries.getNames("en", { select: "official" });
+  const countryList = Object.entries(countryObj).sort((a, b) =>
+    a[1].localeCompare(b[1])
+  );
+
   if (loading) {
     return (
       <div className="edit-loader">
@@ -125,7 +137,6 @@ const EditProfile = () => {
               value={formData.username}
               onChange={handleChange}
               required
-              autoComplete="Abcde"
               placeholder=" "
             />
             <label htmlFor="username">Username</label>
@@ -140,11 +151,51 @@ const EditProfile = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              autoComplete="e.g.: abc@gmail.com"
               placeholder=" "
             />
             <label htmlFor="email">Email</label>
           </div>
+
+          {/* Nationality */}
+          <div className="mb-4">
+            <label
+              htmlFor="nationality"
+              className="form-label"
+              style={{
+                display: "block",
+                marginBottom: "0.5rem",
+                fontWeight: "600",
+                color: "#333",
+              }}
+            >
+              Nationality
+            </label>
+            <select
+              id="nationality"
+              name="nationality"
+              value={formData.nationality}
+              onChange={handleChange}
+              required
+              className="form-select"
+              style={{
+                padding: "0.75rem 1rem",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+                fontSize: "1rem",
+                backgroundColor: "#fff",
+              }}
+            >
+              <option value="" disabled>
+                -- Select your nationality --
+              </option>
+              {countryList.map(([code, name]) => (
+                <option key={code} value={code}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </div>
+
 
           {/* Preferences */}
           <div className="form-group floating-label">
@@ -154,8 +205,7 @@ const EditProfile = () => {
               name="preferences"
               value={formData.preferences}
               onChange={handleChange}
-              placeholder="e.g., hiking, sightseeing"
-              autoComplete="off"
+              placeholder=" "
             />
             <label htmlFor="preferences">Preferences (comma-separated)</label>
           </div>
@@ -168,8 +218,7 @@ const EditProfile = () => {
               name="travel_history"
               value={formData.travel_history}
               onChange={handleChange}
-              placeholder="e.g., Nepal, Japan, Thailand "
-              autoComplete="off"
+              placeholder=" "
             />
             <label htmlFor="travel_history">Travel History (comma-separated)</label>
           </div>
