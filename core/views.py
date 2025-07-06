@@ -1,8 +1,10 @@
 # Standard library
 from io import BytesIO
+from datetime import datetime
 
 # Django imports
 import requests
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
@@ -11,42 +13,33 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from datetime import datetime
 from django.utils import timezone
-from django.conf import settings
 
-# Third-party
-from reportlab.pdfgen import canvas
+# Third-party imports
 import qrcode
+from reportlab.pdfgen import canvas
+import stripe
 
 # DRF imports
 from rest_framework import generics, permissions, status, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import (
-    AllowAny,
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-)
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 
 # App imports
-from .models import Trip, Blog, Comment, Tour, TourRating, Booking, ContactMessage, Category
+from .models import (
+    Trip, Blog, Comment, Tour, TourRating, Booking, ContactMessage, Category
+)
 from .serializers import (
-    RegisterSerializer,
-    UserSerializer,
-    TripSerializer,
-    BlogSerializer,
-    CommentSerializer,
-    ContactMessageSerializer,
-    TourSerializer,
-    TourRatingSerializer,
-    BookingSerializer,
-    CategorySerializer,
+    RegisterSerializer, UserSerializer, TripSerializer, BlogSerializer,
+    CommentSerializer, ContactMessageSerializer, TourSerializer,
+    TourRatingSerializer, BookingSerializer, CategorySerializer,
 )
 from .pagination import TripPagination, CommentPagination
+
 
 User = get_user_model()
 
@@ -64,7 +57,6 @@ class RegisterView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         refresh = RefreshToken.for_user(user)
-
         return Response({
             "user": {
                 "username": user.username,
@@ -126,7 +118,6 @@ class ForgotPasswordView(APIView):
             from_email=None,
             recipient_list=[email],
         )
-
         return Response({"message": "Password reset link sent to your email."})
 
 
@@ -166,6 +157,7 @@ class ContactMessageAPI(APIView):
             serializer.save()
             return Response({"message": "Message received successfully!"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # -------------------------------
 # 📌 Trip Views
@@ -219,19 +211,23 @@ class ExportTripPDFView(APIView):
         p.drawString(50, 780, f"Dates: {trip.start_date} to {trip.end_date}")
         p.drawString(50, 760, f"Budget: ${trip.budget}")
         p.drawString(50, 740, "Destinations:")
+
         y = 720
         for dest in trip.destinations:
             city = dest.get('city', '')
             country = dest.get('country', '')
             p.drawString(70, y, f"- {city}, {country}")
             y -= 20
+
         p.drawString(50, y - 10, "Itinerary:")
         text = p.beginText(70, y - 30)
         for line in trip.itinerary.split('\n'):
             text.textLine(line)
         p.drawText(text)
+
         p.showPage()
         p.save()
+
         return response
 
 
@@ -246,16 +242,26 @@ class ExportTripQRView(APIView):
 
         trip_url = request.build_absolute_uri(f'/api/trips/{trip.id}/')
         qr_img = qrcode.make(trip_url)
+
         buffer = BytesIO()
         qr_img.save(buffer)
         buffer.seek(0)
+
         return HttpResponse(buffer, content_type='image/png')
 
 
+# -------------------------------
+# 📚 Category Views
+# -------------------------------
 
 class CategoryListView(generics.ListAPIView):
     queryset = Category.objects.all().order_by('id')
     serializer_class = CategorySerializer
+
+
+# -------------------------------
+# 📝 Blog Views
+# -------------------------------
 
 class BlogListCreateView(generics.ListCreateAPIView):
     serializer_class = BlogSerializer
@@ -298,6 +304,11 @@ class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         return blog
 
+
+# -------------------------------
+# 💬 Comment Views
+# -------------------------------
+
 class CommentListCreateByBlogView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
     pagination_class = CommentPagination
@@ -311,10 +322,11 @@ class CommentListCreateByBlogView(generics.ListCreateAPIView):
         blog = get_object_or_404(Blog, id=self.kwargs['blog_id'])
         serializer.save(author=self.request.user, blog=blog)
 
+
 class IsCommentAuthor(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        # Only allow the author of the comment to edit/delete
         return obj.author == request.user
+
 
 class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
@@ -324,6 +336,7 @@ class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ['PUT', 'PATCH', 'DELETE']:
             return [permissions.IsAuthenticated(), IsCommentAuthor()]
         return [permissions.AllowAny()]
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -343,6 +356,7 @@ def toggle_like(request, blog_id):
         'likes_count': blog.likes.count()
     })
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def toggle_comment_like(request, comment_id):
@@ -361,6 +375,7 @@ def toggle_comment_like(request, comment_id):
         'likes_count': comment.likes.count()
     })
 
+
 # -------------------------------
 # 🌍 Visa Checker View
 # -------------------------------
@@ -377,6 +392,7 @@ class VisaCheckerAPI(APIView):
             )
 
         api_url = f"https://rough-sun-2523.fly.dev/visa/{nationality}/{destination}"
+
         try:
             external_response = requests.get(api_url, timeout=5)
             if external_response.status_code == 200:
@@ -390,6 +406,7 @@ class VisaCheckerAPI(APIView):
                 {"error": "Failed to connect to Visa API."},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE
             )
+
 
 # -------------------------------
 # 🌤️ Weather API View
@@ -406,6 +423,7 @@ class WeatherForecastAPI(APIView):
             return Response({"error": "API key not configured."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={api_key}"
+
         try:
             geo_res = requests.get(geo_url, timeout=5)
             geo_data_list = geo_res.json()
@@ -415,11 +433,11 @@ class WeatherForecastAPI(APIView):
             geo_data = geo_data_list[0]
             lat = geo_data['lat']
             lon = geo_data['lon']
-
         except requests.RequestException:
             return Response({"error": "Failed to connect to geocoding service."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         forecast_url = f"http://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={api_key}"
+
         try:
             forecast_res = requests.get(forecast_url, timeout=5)
             if forecast_res.status_code == 200:
@@ -444,13 +462,14 @@ class WeatherForecastAPI(APIView):
                 })
 
             return Response({"error": "Could not fetch forecast data."}, status=forecast_res.status_code)
-
         except requests.RequestException:
             return Response({"error": "Failed to connect to forecast service."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
+
 # -------------------------------
-# 🗺️ Tour List API View
+# 🗺️ Tour Views
 # -------------------------------
+
 class TourListAPIView(generics.ListAPIView):
     queryset = Tour.objects.all().order_by('id')
     serializer_class = TourSerializer
@@ -466,6 +485,7 @@ class TourDetailAPIView(generics.RetrieveAPIView):
     def get_serializer_context(self):
         return {'request': self.request}
 
+
 class UserBookingsAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -478,7 +498,7 @@ class UserBookingsAPIView(APIView):
 class BookingCreateAPIView(generics.CreateAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -486,7 +506,7 @@ class BookingCreateAPIView(generics.CreateAPIView):
 
 class BookingDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BookingSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Booking.objects.filter(user=self.request.user)
@@ -501,7 +521,7 @@ class BookingDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 class BookingByTourAPIView(generics.GenericAPIView):
     serializer_class = BookingSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, tour_id):
         try:
@@ -511,25 +531,34 @@ class BookingByTourAPIView(generics.GenericAPIView):
         except Booking.DoesNotExist:
             return Response({"detail": "Booking not found."}, status=status.HTTP_404_NOT_FOUND)
 
-# Create or Update Rating (one per user per tour)
+
+# -------------------------------
+# 🌟 Tour Rating View (Create or Update)
+# -------------------------------
+
 class TourRatingCreateUpdateAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, tour_id):
         user = request.user
         rating_value = request.data.get('rating')
+
         if not rating_value or not (1 <= int(rating_value) <= 5):
             return Response({'error': 'Rating must be between 1 and 5.'}, status=status.HTTP_400_BAD_REQUEST)
 
         tour = generics.get_object_or_404(Tour, id=tour_id)
+
         rating_obj, created = TourRating.objects.update_or_create(
             user=user, tour=tour,
             defaults={'rating': rating_value}
         )
         serializer = TourRatingSerializer(rating_obj)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-import stripe
+
+
+# -------------------------------
+# 💳 Payment Views
+# -------------------------------
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -559,11 +588,43 @@ class CreatePaymentIntentView(APIView):
                 "paymentIntentId": intent.id
             })
         except Exception as e:
-            return Response({"error": str(e)}, status=500)   
+            return Response({"error": str(e)}, status=500)
+
+
+class VerifyPayPalPaymentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        paypal_order_id = request.data.get('orderID')
+        if not paypal_order_id:
+            return Response({'error': 'orderID is required'}, status=400)
+
+        access_token_url = 'https://api-m.sandbox.paypal.com/v1/oauth2/token'
+        order_detail_url = f'https://api-m.sandbox.paypal.com/v2/checkout/orders/{paypal_order_id}'
+
+        # Get access token
+        auth = (settings.PAYPAL_CLIENT_ID, settings.PAYPAL_SECRET)
+        headers = {'Accept': 'application/json', 'Accept-Language': 'en_US'}
+        data = {'grant_type': 'client_credentials'}
+        auth_response = requests.post(access_token_url, headers=headers, data=data, auth=auth)
+        access_token = auth_response.json().get('access_token')
+
+        if not access_token:
+            return Response({'error': 'Failed to get access token'}, status=500)
+
+        # Verify order
+        headers = {'Authorization': f'Bearer {access_token}'}
+        verify_response = requests.get(order_detail_url, headers=headers)
+        verify_data = verify_response.json()
+
+        if verify_data.get('status') == 'COMPLETED':
+            return Response({'status': 'success', 'payer_id': verify_data['payer']['payer_id']})
+        return Response({'error': 'Payment not completed'}, status=400)
+
 
 class BookingPaymentUpdateAPIView(generics.UpdateAPIView):
     serializer_class = BookingSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Booking.objects.filter(user=self.request.user)
@@ -571,9 +632,6 @@ class BookingPaymentUpdateAPIView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         booking = self.get_object()
         data = request.data
-
-        
-        print(request.data)
 
         booking.payment_method = data.get("payment_method", booking.payment_method)
         booking.payment_status = "paid"

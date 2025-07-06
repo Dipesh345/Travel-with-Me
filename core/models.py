@@ -4,21 +4,29 @@ from django.utils import timezone
 from django.utils.text import slugify
 import itertools
 
-# Custom User model
+
+# -------------------------
+# Custom User Model
+# -------------------------
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     profile_image = models.ImageField(upload_to='profiles/', null=True, blank=True)
     preferences = models.JSONField(default=dict, blank=True)  # e.g. preferred destinations
     travel_history = models.JSONField(default=list, blank=True)
     nationality = models.CharField(
-        max_length=2, blank=True, null=True,
+        max_length=2,
+        blank=True,
+        null=True,
         help_text="ISO country code, e.g. 'US'"
     )
 
     def __str__(self):
         return self.username
 
-# Optional: User's own custom trips (separate from Tours)
+
+# -------------------------
+# User's Custom Trips
+# -------------------------
 class Trip(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trips')
     title = models.CharField(max_length=255)
@@ -32,7 +40,10 @@ class Trip(models.Model):
     def __str__(self):
         return f"{self.user.username}'s trip to {self.destinations}"
 
-# Hotel model
+
+# -------------------------
+# Hotel Model
+# -------------------------
 class Hotel(models.Model):
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
@@ -45,7 +56,10 @@ class Hotel(models.Model):
     def __str__(self):
         return self.name
 
-# Blog post category
+
+# -------------------------
+# Blog Category
+# -------------------------
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True, blank=True)
@@ -58,7 +72,10 @@ class Category(models.Model):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-# Blog model
+
+# -------------------------
+# Blog Model
+# -------------------------
 class Blog(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blogs')
     title = models.CharField(max_length=255)
@@ -87,7 +104,10 @@ class Blog(models.Model):
             self.slug = slug
         super().save(*args, **kwargs)
 
-# Blog comments with threading
+
+# -------------------------
+# Blog Comments with Threading
+# -------------------------
 class Comment(models.Model):
     blog = models.ForeignKey('Blog', on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -102,7 +122,10 @@ class Comment(models.Model):
     def is_reply(self):
         return self.parent is not None
 
-# Emergency contact for user
+
+# -------------------------
+# Emergency Contact for User
+# -------------------------
 class EmergencyContact(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -112,7 +135,10 @@ class EmergencyContact(models.Model):
     def __str__(self):
         return f"Emergency Contact for {self.user.username}"
 
-# Contact messages from visitors
+
+# -------------------------
+# Contact Messages from Visitors
+# -------------------------
 class ContactMessage(models.Model):
     full_name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -124,7 +150,10 @@ class ContactMessage(models.Model):
     def __str__(self):
         return f"{self.full_name} - {self.subject}"
 
-# Main Tour model
+
+# -------------------------
+# Main Tour Model
+# -------------------------
 class Tour(models.Model):
     TOUR_TYPES = [
         ('Luxury', 'Luxury'),
@@ -138,7 +167,9 @@ class Tour(models.Model):
     city = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
     country_code = models.CharField(
-        max_length=2, blank=True, null=True,
+        max_length=2,
+        blank=True,
+        null=True,
         help_text="ISO 3166-1 alpha-2 code e.g. 'NP'"
     )
     days = models.PositiveIntegerField()
@@ -161,7 +192,10 @@ class Tour(models.Model):
     def __str__(self):
         return self.title
 
-# Booking model for tours
+
+# -------------------------
+# Booking Model for Tours
+# -------------------------
 class Booking(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),      # booked but payment not done
@@ -218,7 +252,10 @@ class Booking(models.Model):
     def is_fully_refunded(self):
         return self.refunded_amount >= self.payment_amount and self.refund_date is not None
 
-# Ratings for tours by users
+
+# -------------------------
+# Tour Ratings by Users
+# -------------------------
 class TourRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='ratings')

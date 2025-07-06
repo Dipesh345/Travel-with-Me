@@ -1,15 +1,17 @@
 from rest_framework import serializers
-from .models import User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage, Tour, TourRating, Booking, Category
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from .models import (
+    User, Trip, Hotel, Blog, Comment, EmergencyContact, ContactMessage,
+    Tour, TourRating, Booking, Category
+)
 
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'profile_image', 'preferences', 'travel_history', 'nationality']  # added nationality
-
+        fields = ['id', 'username', 'email', 'profile_image', 'preferences', 'travel_history', 'nationality']
 
 class TripSerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,11 +40,11 @@ class BlogSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'slug', 'content', 'thumbnail', 'category',
             'created_at', 'updated_at', 'status', 'tags',
-            'views', 'likes_count', 'is_liked', 'author'
+            'views', 'likes_count', 'is_liked', 'author',
         ]
         read_only_fields = [
             'slug', 'created_at', 'updated_at', 'views',
-            'likes_count', 'is_liked', 'author'
+            'likes_count', 'is_liked', 'author',
         ]
 
     def get_is_liked(self, obj):
@@ -50,7 +52,6 @@ class BlogSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return obj.likes.filter(id=request.user.id).exists()
         return False
-
 
 class CommentSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
@@ -61,7 +62,10 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['id', 'blog', 'author', 'text', 'created_at', 'parent', 'replies', 'is_liked', 'likes_count']
+        fields = [
+            'id', 'blog', 'author', 'text', 'created_at', 'parent',
+            'replies', 'is_liked', 'likes_count',
+        ]
         read_only_fields = ['blog', 'author', 'created_at', 'replies', 'is_liked', 'likes_count']
 
     def get_replies(self, obj):
@@ -69,14 +73,13 @@ class CommentSerializer(serializers.ModelSerializer):
         return CommentSerializer(queryset, many=True, context=self.context).data
 
     def get_is_liked(self, obj):
-        request = self.context.get("request")
+        request = self.context.get('request')
         if request and request.user.is_authenticated:
             return obj.likes.filter(id=request.user.id).exists()
         return False
 
     def get_likes_count(self, obj):
         return obj.likes.count()
-
 
 class EmergencyContactSerializer(serializers.ModelSerializer):
     class Meta:
@@ -90,9 +93,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'email', 'password', 'password2')
-        extra_kwargs = {
-            'email': {'required': True},
-        }
+        extra_kwargs = {'email': {'required': True}}
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
@@ -126,7 +127,7 @@ class TourSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tour
         fields = [
-            'id', 'title', 'city', 'country', 'country_code',  # added country_code here
+            'id', 'title', 'city', 'country', 'country_code',
             'days', 'price', 'image', 'type',
             'activities', 'description', 'admission_fee', 'insurance_coverage',
             'language', 'hotel_transfer', 'created_at',
@@ -141,7 +142,6 @@ class TourSerializer(serializers.ModelSerializer):
 
     def get_bookings_count(self, obj):
         return obj.bookings.count()
-
 
 class TourRatingSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
