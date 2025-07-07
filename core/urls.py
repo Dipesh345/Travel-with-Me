@@ -10,7 +10,7 @@ from .views import (
     BookingCreateAPIView, BookingDetailAPIView, BookingByTourAPIView,
     UserBookingsAPIView, CategoryListView, CommentRetrieveUpdateDestroyView,
     toggle_comment_like, BookingPaymentUpdateAPIView,
-    CreatePaymentIntentView, VerifyPayPalPaymentView,
+    CreatePaymentIntentView, VerifyPayPalPaymentView, ExchangeRateAPIView
 )
 
 urlpatterns = [
@@ -79,4 +79,9 @@ urlpatterns = [
     # --------------------
     path('payments/create-payment-intent/', CreatePaymentIntentView.as_view(), name='create-payment-intent'),
     path('payments/verify-paypal-payment/', VerifyPayPalPaymentView.as_view(), name='verify-paypal'),
+
+    # --------------------
+    # Currency Exchange Rate API
+    # --------------------
+    path('exchange-rate/', ExchangeRateAPIView.as_view(), name='exchange_rate'),
 ]

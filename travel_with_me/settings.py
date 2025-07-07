@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'core',
-    'converter'
 ]
 
 # ------------------------
@@ -189,3 +188,8 @@ STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
 PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
+
+# ------------------------
+# EXCHANGE RATE API KEY
+# ------------------------
+EXCHANGE_RATE_API_KEY = config('EXCHANGE_RATE_API_KEY')

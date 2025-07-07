@@ -12,6 +12,7 @@ import BookingStatus from "./BookingStatus";
 import RatingStars from "./RatingStars";
 import WeatherForecastInline from "./WeatherForecastInline";
 import VisaCheckerInline from "./VisaCheckerInline";
+import CurrencyConverterInline from "./CurrencyConverterInline";
 
 export default function Details() {
   const { id } = useParams();
@@ -40,15 +41,59 @@ export default function Details() {
   const [rating, setRating] = useState(0);
   const [submittedRating, setSubmittedRating] = useState(false);
 
+  // Currency codes for converter
+  const [fromCurrency, setFromCurrency] = useState(null); // User currency
+  const [toCurrency, setToCurrency] = useState(null);     // Tour currency
+
+  // Fetch currency from ISO country code using REST Countries API
+  async function fetchCurrencyFromIso(isoCode) {
+    if (!isoCode) return null;
+    try {
+      const res = await axios.get(`https://restcountries.com/v3.1/alpha/${isoCode}`);
+      if (
+        res.data &&
+        Array.isArray(res.data) &&
+        res.data[0] &&
+        res.data[0].currencies
+      ) {
+        const currencies = res.data[0].currencies;
+        const currencyCodes = Object.keys(currencies);
+        if (currencyCodes.length > 0) {
+          return currencyCodes[0];
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch currency for ISO:", isoCode, error);
+      return null;
+    }
+    return null;
+  }
+
   useEffect(() => {
     setLoading(true);
     setNotFound(false);
 
+    let userNationality = null;
+    let tourCountryCode = null;
+
+    // Fetch tour details
     axios
       .get(`http://localhost:8000/api/tours/${id}/`)
-      .then((res) => {
+      .then(async (res) => {
         setTour(res.data);
+        tourCountryCode = res.data.country_code;
         setLoading(false);
+
+        if (userNationality) {
+          const [fromCurr, toCurr] = await Promise.all([
+            fetchCurrencyFromIso(userNationality),
+            fetchCurrencyFromIso(tourCountryCode),
+          ]);
+          setFromCurrency(fromCurr || "USD");
+          setToCurrency(toCurr || "USD");
+        } else {
+          setToCurrency((await fetchCurrencyFromIso(tourCountryCode)) || "USD");
+        }
       })
       .catch(() => {
         setNotFound(true);
@@ -56,13 +101,32 @@ export default function Details() {
       });
 
     if (isAuthenticated) {
+      // Fetch user profile
       axios
         .get("http://localhost:8000/api/auth/profile/", {
           headers: { Authorization: `Bearer ${token}` },
         })
-        .then((res) => setUser(res.data))
-        .catch(() => setUser(null));
+        .then(async (res) => {
+          setUser(res.data);
+          userNationality = res.data.nationality;
 
+          if (tourCountryCode) {
+            const [fromCurr, toCurr] = await Promise.all([
+              fetchCurrencyFromIso(userNationality),
+              fetchCurrencyFromIso(tourCountryCode),
+            ]);
+            setFromCurrency(fromCurr || "USD");
+            setToCurrency(toCurr || "USD");
+          } else {
+            setFromCurrency((await fetchCurrencyFromIso(userNationality)) || "USD");
+          }
+        })
+        .catch(() => {
+          setUser(null);
+          setFromCurrency("USD");
+        });
+
+      // Fetch booking info
       axios
         .get(`http://localhost:8000/api/bookings/by-tour/${id}/`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -100,9 +164,12 @@ export default function Details() {
         people: 1,
         booking_date: "",
       });
+      setFromCurrency("USD");
+      setToCurrency("USD");
     }
   }, [id, isAuthenticated, token]);
 
+  // Booking update, create, cancel, and rating handlers (unchanged)
   const handleBookingUpdate = async (e) => {
     e.preventDefault();
     if (!booking) return;
@@ -204,7 +271,7 @@ export default function Details() {
     }
   };
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
+    if (loading) return <div className="text-center mt-5">Loading...</div>;
   if (notFound || !tour) return <div className="text-center mt-5">Tour not found.</div>;
 
   return (
@@ -214,9 +281,7 @@ export default function Details() {
       <section className="details-banner">
         <img src={sectionBanner} alt="Details Banner" className="banner-image" />
         <div className="banner-content">
-          <h1>
-            <span className="symbol">✦</span> Tour Details
-          </h1>
+          <h1><span className="symbol">✦</span> Tour Details</h1>
           <div className="breadcrumb">
             <a href="/">Home</a> <span>➔</span> <span>Tour Details</span>
           </div>
@@ -266,7 +331,6 @@ export default function Details() {
         </div>
 
         <BookingStatus booking={booking} />
-
         <TourInfo tour={tour} />
 
         <div style={{ marginTop: "1.5rem", fontSize: "1.1rem" }}>
@@ -320,18 +384,20 @@ export default function Details() {
 
       <section className="additional-info" style={{ padding: "2rem 0" }}>
         <div className="container">
-        {tour && <WeatherForecastInline city={tour.city} />}
+          {tour && <WeatherForecastInline city={tour.city} />}
 
-        {user &&
-          tour &&
-          user.nationality &&
-          tour.country_code &&
-          user.nationality.toUpperCase() !== tour.country_code.toUpperCase() && (
-            <VisaCheckerInline
-              nationality={user.nationality}
-              destination={tour.country_code}
-            />
-          )}
+          <CurrencyConverterInline fromCurrency={fromCurrency} toCurrency={toCurrency} />
+
+          {user &&
+            tour &&
+            user.nationality &&
+            tour.country_code &&
+            user.nationality.toUpperCase() !== tour.country_code.toUpperCase() && (
+              <VisaCheckerInline
+                nationality={user.nationality}
+                destination={tour.country_code}
+              />
+            )}
         </div>
       </section>
     </div>

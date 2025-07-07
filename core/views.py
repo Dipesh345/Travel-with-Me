@@ -643,3 +643,45 @@ class BookingPaymentUpdateAPIView(generics.UpdateAPIView):
         booking.save()
         serializer = self.get_serializer(booking)
         return Response(serializer.data)
+
+
+# -------------------------------
+# 💱 Currency Exchange Rate API View
+# -------------------------------
+
+class ExchangeRateAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        amount = request.data.get('amount')
+        from_currency = request.data.get('from_currency')
+        to_currency = request.data.get('to_currency')
+
+        if not all([amount, from_currency, to_currency]):
+            return Response({'error': 'Missing required fields'}, status=400)
+
+        try:
+            amount = float(amount)
+        except (ValueError, TypeError):
+            return Response({'error': 'Invalid amount'}, status=400)
+
+        try:
+            # Fetch latest rates for from_currency
+            url = f'https://v6.exchangerate-api.com/v6/{settings.EXCHANGE_RATE_API_KEY}/latest/{from_currency.upper()}'
+            response = requests.get(url)
+            data = response.json()
+
+            if response.status_code != 200 or data.get('result') != 'success':
+                return Response({'error': data.get('error-type', 'API request failed')}, status=400)
+
+            rates = data.get('conversion_rates', {})
+            rate = rates.get(to_currency.upper())
+
+            if rate is None:
+                return Response({'error': f'Currency {to_currency} not supported'}, status=400)
+
+            result = round(amount * rate, 4)
+            return Response({'result': result, 'rate': rate})
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
