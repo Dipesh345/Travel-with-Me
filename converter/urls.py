@@ -1,6 +1,6 @@
 from django.urls import path
-from . import views
+from .views import convert_currency_api
 
 urlpatterns = [
-    path('', views.convert_currency, name='convert_currency'),
+    path('api/convert/', convert_currency_api, name='convert_currency_api'),
 ]
